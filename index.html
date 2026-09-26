@@ -372,6 +372,27 @@ body.public-online .netbar{justify-content:flex-end}
 .lobby-player-list .player{width:100%!important;box-sizing:border-box!important;overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important;margin:0!important}
 .lobby-player-list .rating{flex:0 0 auto;margin-left:5px}
 .table-row>div{min-width:0}
+
+/* Android landscape shell v1 */
+body.android-app{overscroll-behavior:none}
+body.android-app #landing{min-height:100vh}
+@media(max-width:950px) and (orientation:landscape){
+ body.android-app .landing-inner{padding:12px}
+ body.android-app .brand{margin-bottom:8px}
+ body.android-app .mode-grid{grid-template-columns:1fr 1fr;gap:12px}
+ body.android-app .mode-card{min-height:220px;padding:14px}
+ body.android-app .mode-art{height:105px;font-size:64px}
+ body.android-app .mode-name{font-size:20px}
+ body.android-app #singleScreen .app{grid-template-columns:minmax(0,1fr) 190px!important}
+ body.android-app #singleScreen .hand{right:202px!important;bottom:8px!important}
+ body.android-app #singleScreen .hand .card{width:68px!important;height:96px!important;margin-left:-30px!important}
+ body.android-app .online-play-layout{grid-template-columns:minmax(0,1fr) 205px!important}
+ body.android-app #onlineGame .og-hand-table{bottom:12px!important;height:104px!important}
+ body.android-app #onlineGame .og-hand-table .og-real-card{width:68px!important;height:96px!important;margin-left:-30px!important}
+ body.android-app #onlineGame .og-pass-table{bottom:110px!important}
+ body.android-app .online-side{padding:8px}
+ body.android-app .og-seat{transform:scale(.84)}
+}
 </style></head><body>
 <div id="mainMenu" class="menu-screen">
   <div class="brand-title">HEARTS ARENA</div>
@@ -384,6 +405,8 @@ body.public-online .netbar{justify-content:flex-end}
 <div id="singleScreen" style="display:none">
 <div class="app"><main class="table"><div class="topbar"><div class="brand">♥ HEARTS ARENA</div><div class="pill" id="roundInfo"></div><div class="pill" id="broken">♡ Hearts not broken</div></div><div class="players" id="players"></div><div class="center"><div class="status" id="status"></div><div class="trick" id="trick"></div></div><button class="passbtn" id="passBtn" hidden>Pass 3 cards</button><div class="hand" id="hand"></div></main><aside class="side"><button class="side-main-menu" onclick="backMenu()">← Main Menu</button><div class="settings"><label>Target score<select id="target"><option>75</option><option selected>100</option><option>150</option></select></label><label>Jack of Diamonds<select id="jackDiamonds"><option value="off" selected>Off (standard)</option><option value="on">On (J♦ = -10)</option></select></label><label>AI difficulty<select id="difficulty"><option value="easy">Easy</option><option value="normal">Normal</option><option value="hard" selected>Hard</option></select></label><label>Sorting<select id="sorting"><option value="suit">Suit: ♥ ♣ ♦ ♠</option><option value="rank">Rank: A → 2</option></select></label></div><button class="btn" id="newGame">New game</button><h3>Score</h3><div id="scoreboard"></div><h3>Recent tricks</h3><div class="history" id="history"></div><h3>Rules</h3><div class="tiny">Play proceeds clockwise: You → West → North → East. The winner of each trick leads the next trick. Follow suit. 2♣ leads the first trick. Hearts cannot be led until hearts are broken (unless you only have hearts). Each ♥ = 1 point and Q♠ = 13 points. On the first trick you cannot play a point card if you have a non-point alternative. Taking all 26 points is Shooting the Moon. ♦J has no special rule.</div></aside></div><div class="modal hidden" id="modal"><div class="box" id="modalBox"></div></div>
 <script>
+if(new URLSearchParams(location.search).get('android')==='1')document.documentElement.classList.add('android-app');
+
 const SUITS=['H','C','D','S'], SYM={H:'♥',C:'♣',D:'♦',S:'♠'}, NAMES=['You','West','North','East'], POS=['south','west','north','east']; // clockwise seat order from the player's perspective
 const RANKS=['2','3','4','5','6','7','8','9','10','J','Q','K','A']; const val=r=>RANKS.indexOf(r)+2;
 let G, selected=[]; const $=id=>document.getElementById(id); const sleep=ms=>new Promise(r=>setTimeout(r,ms));
