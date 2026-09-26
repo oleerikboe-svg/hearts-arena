@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "android/**"
+      - "index.html"
       - ".github/workflows/android-apk.yml"
 
 permissions:
