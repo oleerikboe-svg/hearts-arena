@@ -317,6 +317,27 @@ body.public-online .netbar{justify-content:flex-end}
  #waitingRoom .table-chat{margin-top:6px;min-height:92px}
 }
 
+
+/* V47 online game: table + permanent right sidebar */
+#onlineScreen:has(#onlineGame[style*="block"]){padding-top:0!important}
+#onlineGame{height:100vh!important;width:100%!important;max-width:none!important;margin:0!important}
+.online-play-layout{height:100vh;display:grid;grid-template-columns:minmax(0,1fr) 270px;overflow:hidden}
+#onlineGame .online-table-wrap{height:100vh!important;width:100%!important;max-width:none!important;margin:0!important;min-height:0!important}
+#onlineGame .og-topbar{height:48px!important;padding:8px 16px}
+#onlineGame .og-table{height:calc(100vh - 48px)!important;border-radius:0 30px 30px 0!important}
+.online-side{height:100vh;background:#0c1b17;border-left:1px solid #ffffff18;padding:14px;display:flex;flex-direction:column;overflow:hidden}
+.online-side-section{border-top:1px solid #ffffff14;padding-top:12px;margin-top:4px;font-size:12px}
+.online-side-section>b{display:block;color:var(--gold);font-size:11px;letter-spacing:1px;margin-bottom:9px}
+#onlineSideRules{display:grid;gap:7px;opacity:.78}
+.online-side-chat{flex:1;min-height:0;display:flex;flex-direction:column}
+.online-side .game-chat{display:flex!important;position:static!important;width:auto!important;flex:1;min-height:0;background:#061b15aa;box-shadow:none;margin:0;border-radius:10px;flex-direction:column}
+.online-side .game-chat .chat-log{height:auto!important;flex:1;min-height:0;overflow:auto}
+.online-side .chat-compose{flex:0 0 40px}
+#gameChatToggle{display:none!important}
+#onlineGame .og-hand-table{left:50%!important;right:auto!important;width:min(96%,980px)!important;transform:translateX(-50%)!important;display:flex!important;visibility:visible!important;opacity:1!important}
+#onlineGame .og-hand-table .og-real-card{display:block!important;visibility:visible!important;opacity:1!important}
+@media(max-width:1000px){.online-play-layout{grid-template-columns:minmax(0,1fr) 230px}}
+
 </style></head><body>
 <div id="mainMenu" class="menu-screen">
   <div class="brand-title">HEARTS ARENA</div>
@@ -708,8 +729,8 @@ function animateOnlineDelta(prev,next){
 }
 
 function showOnlineGame(st){
- animateOnlineDelta(prevOnlineState,st);prevOnlineState=JSON.parse(JSON.stringify(st));onlineGameState=st;document.getElementById('waitingRoom').style.display='none';document.getElementById('tableList').style.display='none';document.querySelector('.lobby-columns').style.display='none';document.getElementById('onlineGame').style.display='block';
- document.getElementById('ogTable').textContent=`#${st.tableId||activeTableId} · Online Hearts`;
+ animateOnlineDelta(prevOnlineState,st);prevOnlineState=JSON.parse(JSON.stringify(st));onlineGameState=st;document.getElementById('waitingRoom').style.display='none';document.getElementById('tableList').style.display='none';document.querySelector('.lobby-columns').style.display='none';document.querySelector('.online-head').style.display='none';document.getElementById('hostPanel').style.display='none';document.querySelector('.netbar').style.display='none';document.getElementById('onlineGame').style.display='block';
+ document.getElementById('ogTable').textContent=`#${st.tableId||activeTableId} · Online Hearts`;let sideRules=document.getElementById('onlineSideRules');if(sideRules)sideRules.innerHTML=`<span>Target: ${st.target||'—'}</span><span>J♦: ${st.jd?'On':'Off'}</span><span>Your clock: ${fmtClock((st.clocks||{})[clientId]||0)}</span>`;
  let clocks=st.clocks||{},players=st.players||[],meIndex=players.findIndex(x=>x.id===clientId);if(meIndex<0)meIndex=0;
  const rel=n=>players[(meIndex+n)%4], seats=[[0,'ogSeatS'],[1,'ogSeatW'],[2,'ogSeatN'],[3,'ogSeatE']];
  for(const [n,id] of seats){let pl=rel(n),el=document.getElementById(id);if(!pl){el.innerHTML='';continue}let turn=st.turnId===pl.id;el.classList.toggle('active',turn);el.innerHTML=`<div class="og-avatar">${n===0?'🙂':'●'}</div><b>${pl.name}</b><span>${pl.rating} rating</span><span>${pl.cards} cards • ${fmtClock(clocks[pl.id]??0)}</span>${turn?'<em>PLAYING</em>':''}`;}
@@ -778,10 +799,11 @@ function showOnlineMatchEnd(m){
  box.innerHTML=`<div class="result-card"><h2>${m.reason==='timeout'?'Game over — clock expired':'Game over'}</h2>${m.timeoutName?`<p>${m.timeoutName} ran out of time.</p>`:''}${rows}<button class="host-btn" onclick="closeOnlineResult()">Continue to lobby</button></div>`;
  box.style.display='grid';
 }
-function closeOnlineResult(){document.getElementById('ogResult').style.display='none';document.getElementById('onlineGame').style.display='none';openOnline()}
+function restoreOnlineChrome(){let h=document.querySelector('.online-head'),n=document.querySelector('.netbar');if(h)h.style.display='flex';if(n)n.style.display='flex'}
+function closeOnlineResult(){document.getElementById('ogResult').style.display='none';document.getElementById('onlineGame').style.display='none';restoreOnlineChrome();openOnline()}
 function leaveOnlineGame(){
  if(onlineGameState&&onlineGameState.phase){showOnlineToast('An active online game cannot be left without disconnecting.');return}
- document.getElementById('onlineGame').style.display='none';openOnline();
+ document.getElementById('onlineGame').style.display='none';restoreOnlineChrome();openOnline();
 }
 
 if(location.protocol==='https:'||(location.protocol==='http:'&&!['localhost','127.0.0.1'].includes(location.hostname)))document.body.classList.add('public-online');
@@ -797,13 +819,14 @@ if(location.protocol==='https:'||(location.protocol==='http:'&&!['localhost','12
    </div><button class="host-btn" onclick="createDemoTable()">Create public table</button>
  </div>
  <div class="lobby-columns"><span>TABLE</span><span>RULES</span><span>PLAYERS</span><span></span></div>
- <div id="tableList"></div><div id="onlineGame" class="online-game online-table-wrap" style="display:none">
- <div class="og-topbar"><button class="back-menu" onclick="leaveOnlineGame()">← Lobby</button><b id="ogTable">Online Hearts</b><span id="ogClock">7:00</span></div>
+ <div id="tableList"></div><div id="onlineGame" class="online-game" style="display:none">
+ <div class="online-play-layout"><div class="online-table-wrap"><div class="og-topbar"><b id="ogTable">Online Hearts</b><span id="ogClock">7:00</span></div>
  <div class="og-table">
   <div id="ogSeatN" class="og-seat og-north"></div><div id="ogSeatW" class="og-seat og-west"></div><div id="ogSeatE" class="og-seat og-east"></div><div id="ogSeatS" class="og-seat og-south"></div>
   <div id="ogStatus" class="og-center-status">Waiting…</div><div id="ogTrick" class="og-trick-center"></div>
-  <button id="gameChatToggle" class="game-chat-toggle" onclick="toggleGameChat()">Chat</button><div id="gameChat" class="game-chat"><div id="gameChatLog" class="chat-log"></div><div class="chat-compose"><input id="gameChatInput" maxlength="160" placeholder="Message…" onkeydown="if(event.key==='Enter')sendChat('game')"><button onclick="sendChat('game')">Send</button></div></div>
   <div id="ogHand" class="og-hand-table"></div><div id="ogPass" class="og-pass-table"></div><div id="ogResult" class="og-result" style="display:none"></div>
+ </div></div>
+ <aside class="online-side"><button class="side-main-menu" onclick="leaveOnlineGame()">← Lobby</button><div class="online-side-section"><b>TABLE</b><div id="onlineSideRules"></div></div><div class="online-side-section online-side-chat"><b>CHAT</b><div id="gameChat" class="game-chat open"><div id="gameChatLog" class="chat-log"></div><div class="chat-compose"><input id="gameChatInput" maxlength="160" placeholder="Message…" onkeydown="if(event.key==='Enter')sendChat('game')"><button onclick="sendChat('game')">Send</button></div></div></div></aside>
  </div>
 </div>
 <div id="waitingRoom" class="waiting-room" style="display:none">
