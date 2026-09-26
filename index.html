@@ -496,7 +496,7 @@ async function play(i,c){
   G.roundPts[w]+=p;G.history.push(`${NAMES[w]} took the trick${p?' • +'+p+' points':''}`);G.turn=w;G.first=false;render();
   const finished=[...G.trick];await showTrickWinner(w,p,finished);
   G.played.push(...finished.map(x=>x.card));G.trick=[];G.animating=false;render();await sleep(450);
-  if(G.hands.every(h=>!h.length)){endRound();return}
+  if(G.hands.every(h=>!h.length)||G.played.filter(c=>c.s==='H').length===13&&G.played.some(c=>key(c)==='QS')){endRound();return}
   $('status').textContent=G.turn===0?'Your turn':`${NAMES[G.turn]} is thinking…`;if(G.turn!==0&&i===0)setTimeout(aiLoop,0);
 }
 function chooseAI(i){
@@ -508,7 +508,10 @@ function chooseAI(i){
   L.sort((a,b)=>score(a)-score(b));if(Math.random()<.2)return L[Math.min(1,L.length-1)];return L[0]
 }
 let aiBusy=false;async function aiLoop(){if(aiBusy)return;aiBusy=true;try{while(!G.passing&&G.turn!==0&&G.hands[G.turn].length&&!G.over){$('status').textContent=`${NAMES[G.turn]} is thinking…`;await sleep(300);let i=G.turn,c=chooseAI(i);await play(i,c);if(G.turn===0||G.passing||G.over)break}}finally{aiBusy=false}}
-function endRound(){let shooter=G.roundPts.findIndex(x=>x===26);if(shooter>=0){for(let i=0;i<4;i++)if(i!==shooter)G.scores[i]+=26;G.history.push(`🌙 ${NAMES[shooter]} shot the moon!`)}else for(let i=0;i<4;i++)G.scores[i]+=G.roundPts[i];let target=G.target;if(G.scores.some(x=>x>=target)){G.over=true;let order=[0,1,2,3].sort((a,b)=>G.scores[a]-G.scores[b]);showEnd(order);return}showRound()}
+function finishLocalRound(){let target=G.target;if(G.scores.some(x=>x>=target)){G.over=true;let order=[0,1,2,3].sort((a,b)=>G.scores[a]-G.scores[b]);showEnd(order);return}showRound()}
+function applyLocalMoon(shooter,choice){if(choice==='minus')G.scores[shooter]-=26;else for(let i=0;i<4;i++)if(i!==shooter)G.scores[i]+=26;G.history.push(`🌙 ${NAMES[shooter]} shot the moon!`);$('modal').classList.add('hidden');finishLocalRound()}
+function aiMoonChoice(shooter){let plus=G.scores.map((x,i)=>x+(i===shooter?0:26)),minus=G.scores.map((x,i)=>x+(i===shooter?-26:0));let rank=a=>[0,1,2,3].sort((i,j)=>a[i]-a[j]).indexOf(shooter);return rank(minus)<rank(plus)||minus[shooter]<plus[shooter]?'minus':'plus'}
+function endRound(){let shooter=G.roundPts.findIndex(x=>x===26);if(shooter>=0){if(shooter===0){let b=$('modalBox');b.innerHTML=`<h1>🌙 You shot the moon!</h1><p>Choose how to score the 26 points.</p><button class="btn" id="moonPlus">+26 to each opponent</button> <button class="btn" id="moonMinus">−26 from my score</button>`;$('modal').classList.remove('hidden');$('moonPlus').onclick=()=>applyLocalMoon(shooter,'plus');$('moonMinus').onclick=()=>applyLocalMoon(shooter,'minus');return}applyLocalMoon(shooter,aiMoonChoice(shooter));return}for(let i=0;i<4;i++)G.scores[i]+=G.roundPts[i];finishLocalRound()}
 function showRound(){let b=$('modalBox');b.innerHTML=`<h1>Round ${G.round} complete</h1><div class="stand">${NAMES.map((n,i)=>`<div><b>${n}</b><span>+${G.roundPts[i]} • total ${G.scores[i]}</span></div>`).join('')}</div><button class="btn" id="continue">Next round</button>`;$('modal').classList.remove('hidden');$('continue').onclick=()=>{$('modal').classList.add('hidden');G.passRound++;fresh(false)}}
 function showEnd(order){let b=$('modalBox');b.innerHTML=`<h1>🏆 ${NAMES[order[0]]} wins!</h1><p>Lowest score wins.</p><div class="stand">${order.map((i,n)=>`<div><b>${n+1}. ${NAMES[i]}</b><span>${G.scores[i]} points</span></div>`).join('')}</div><button class="btn" id="again">Play again</button>`;$('modal').classList.remove('hidden');$('again').onclick=()=>{$('modal').classList.add('hidden');fresh(true)}}
 let configuring=true;
@@ -579,6 +582,7 @@ function handleNet(m){
  }
  if(m.type==='RATING'){onlineMe.rating=m.rating;localStorage.setItem('heartsRating',onlineMe.rating);syncProfileUI();const mr=document.getElementById('myRating');if(mr)mr.textContent=m.rating}
  if(m.type==='GAME_START'||m.type==='GAME_STATE'){showOnlineGame(m.state||m.game||m);}
+ if(m.type==='MOON_CHOICE'){showOnlineMoonChoice(m);}
  if(m.type==='ROUND_END'){showOnlineRoundEnd(m);}
  if(m.type==='MATCH_END'){showOnlineMatchEnd(m);}
  if(m.type==='CHAT'){receiveChat(m);}
@@ -734,10 +738,11 @@ function receiveChat(m){
 }
 function toggleGameChat(){document.getElementById('gameChat').classList.toggle('open')}
 
+function showOnlineMoonChoice(m){const box=document.getElementById('ogResult');if(!box)return;box.innerHTML=`<div class="result-card"><h2>🌙 You shot the moon!</h2><p>Choose how to score the 26 points.</p><button class="host-btn" onclick="sendNet('MOON_CHOICE',{choice:'plus'})">+26 to each opponent</button> <button class="host-btn" onclick="sendNet('MOON_CHOICE',{choice:'minus'})">−26 from my score</button></div>`;box.style.display='grid'}
 function showOnlineRoundEnd(m){
  const box=document.getElementById('ogResult'); if(!box)return;
  const rows=(m.players||[]).map(p=>`<div class="result-row"><b>${p.name}</b><span>${p.roundPoints>=0?'+':''}${p.roundPoints} this round</span><strong>${p.score}</strong></div>`).join('');
- box.innerHTML=`<div class="result-card"><h2>Round complete</h2>${m.moon?`<p>${m.moon} shot the moon!</p>`:''}${rows}<small>Next round starts automatically…</small></div>`;
+ box.innerHTML=`<div class="result-card"><h2>Round complete</h2>${m.moon?`<p>${m.moon} shot the moon! ${m.moonChoice==='minus'?'−26 from own score':'+26 to the other players'}</p>`:''}${rows}<small>Next round starts automatically…</small></div>`;
  box.style.display='grid'; setTimeout(()=>{box.style.display='none'},1300);
 }
 function showOnlineMatchEnd(m){
