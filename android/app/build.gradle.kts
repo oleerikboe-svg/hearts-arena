@@ -7,6 +7,11 @@ android {
     namespace = "com.heartsarena.game"
     compileSdk = 35
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     defaultConfig {
         applicationId = "com.heartsarena.game"
         minSdk = 26
