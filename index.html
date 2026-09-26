@@ -258,6 +258,8 @@
 .online-toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-18px);z-index:150;background:#231b18;color:#fff;border:1px solid #e5bd6355;border-radius:10px;padding:10px 16px;box-shadow:0 10px 30px #0008;opacity:0;pointer-events:none;transition:.18s ease}.online-toast.show{opacity:1;transform:translate(-50%,0)}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e5bd63;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+body.public-online .netbar #serverUrl,body.public-online .netbar #serverUrl+button{display:none!important}
+body.public-online .netbar{justify-content:flex-end}
 </style></head><body>
 <div id="mainMenu" class="menu-screen">
   <div class="brand-title">HEARTS ARENA</div>
@@ -499,7 +501,7 @@ function editProfile(){
  if(net){try{net.close()}catch{}} setTimeout(connectOnline,100);
 }
 function openSingle(){document.getElementById('mainMenu').style.display='none';document.getElementById('onlineScreen').style.display='none';document.getElementById('singleScreen').style.display='block'}
-function openOnline(){syncProfileUI();document.getElementById('mainMenu').style.display='none';document.getElementById('singleScreen').style.display='none';document.getElementById('onlineScreen').style.display='block';renderLobby()}
+function openOnline(){syncProfileUI();document.getElementById('mainMenu').style.display='none';document.getElementById('singleScreen').style.display='none';document.getElementById('onlineScreen').style.display='block';const u=document.getElementById('serverUrl');if(u)u.value=defaultServerUrl();renderLobby();if(!net||net.readyState>1)setTimeout(connectOnline,80)}
 function backMenu(){document.getElementById('singleScreen').style.display='none';document.getElementById('onlineScreen').style.display='none';document.getElementById('mainMenu').style.display='block'}
 function toggleHost(){let x=document.getElementById('hostPanel');x.style.display=x.style.display==='none'?'block':'none'}
 function renderLobby(){
@@ -519,8 +521,14 @@ function joinDemo(id){
 
 let net=null,clientId=null,reconnectToken=localStorage.getItem('heartsReconnect')||null,reconnectTimer=null,manualDisconnect=false,connecting=false;
 function setNetState(text,on=false){const t=document.getElementById('netText'),d=document.getElementById('netDot');if(t)t.textContent=text;if(d)d.className=on?'connected':''}
+function defaultServerUrl(){
+ if(location.protocol==='https:')return 'wss://'+location.host+'/ws';
+ if(location.protocol==='http:'&&!['localhost','127.0.0.1'].includes(location.hostname))return 'ws://'+location.host+'/ws';
+ return 'ws://localhost:8080/ws';
+}
 function connectOnline(){
- const url=document.getElementById('serverUrl').value.trim();if(!url||connecting||net?.readyState===1)return;
+ const input=document.getElementById('serverUrl');const url=(input?.value.trim()||defaultServerUrl());if(input)input.value=url;
+ if(!url||connecting||net?.readyState===1)return;
  manualDisconnect=false;connecting=true;
  try{net=new WebSocket(url)}catch(e){connecting=false;setNetState('Invalid server address');return}
  setNetState('Connecting…');
@@ -712,9 +720,10 @@ function leaveOnlineGame(){
  document.getElementById('onlineGame').style.display='none';openOnline();
 }
 
+if(location.protocol==='https:'||(location.protocol==='http:'&&!['localhost','127.0.0.1'].includes(location.hostname)))document.body.classList.add('public-online');
 </script></div>
 <div id="onlineScreen" class="online-screen" style="display:none">
- <div class="netbar"><div class="profile-chip"><span class="profile-avatar">♥</span><div><b id="profileNameView">Player</b><small>Rating <span id="profileRatingView">1200</span></small></div><button class="profile-edit" onclick="editProfile()" title="Edit player name">Edit</button></div><span id="netDot"></span><span id="netText">Offline</span><input id="serverUrl" value="ws://localhost:8080" aria-label="Server URL"><button class="back-menu" onclick="connectOnline()">Connect</button></div><div class="online-head"><div><button class="back-menu" onclick="backMenu()">← Main menu</button><h1>Online Lobby</h1><p>Open tables waiting for players</p></div><button class="host-btn" onclick="toggleHost()">+ Create Table</button></div>
+ <div class="netbar"><div class="profile-chip"><span class="profile-avatar">♥</span><div><b id="profileNameView">Player</b><small>Rating <span id="profileRatingView">1200</span></small></div><button class="profile-edit" onclick="editProfile()" title="Edit player name">Edit</button></div><span id="netDot"></span><span id="netText">Offline</span><input id="serverUrl" value="" aria-label="Server URL"><button class="back-menu" onclick="connectOnline()">Connect</button></div><div class="online-head"><div><button class="back-menu" onclick="backMenu()">← Main menu</button><h1>Online Lobby</h1><p>Open tables waiting for players</p></div><button class="host-btn" onclick="toggleHost()">+ Create Table</button></div>
  <div id="hostPanel" class="host-panel" style="display:none">
    <h2>Create Table</h2><div class="host-grid">
     <label>Table name<input id="hostName" value="My Hearts Table"></label>
