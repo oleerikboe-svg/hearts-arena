@@ -393,6 +393,39 @@ body.android-app #landing{min-height:100vh}
  body.android-app .online-side{padding:8px}
  body.android-app .og-seat{transform:scale(.84)}
 }
+
+/* Android landscape shell v2: compact phone layout */
+html.android-app,html.android-app body{height:100%;overflow:hidden}
+html.android-app #landing{height:100vh!important;min-height:0!important;overflow:hidden!important}
+html.android-app .landing-inner{padding:6px 10px!important;max-height:100vh!important;box-sizing:border-box!important}
+html.android-app .brand{margin:0 0 4px!important;transform:scale(.82);transform-origin:top center}
+html.android-app .mode-grid{grid-template-columns:1fr 1fr!important;gap:8px!important}
+html.android-app .mode-card{min-height:0!important;height:calc(100vh - 92px)!important;max-height:270px!important;padding:8px 12px!important}
+html.android-app .mode-art{height:72px!important;font-size:46px!important;margin-bottom:2px!important}
+html.android-app .mode-name{font-size:17px!important;margin:2px 0!important}
+html.android-app .mode-desc{font-size:11px!important;line-height:1.2!important;margin:2px 0!important}
+html.android-app .mode-card button{padding:7px 12px!important;font-size:12px!important}
+html.android-app #singleScreen .app{grid-template-columns:minmax(0,1fr) 160px!important}
+html.android-app #singleScreen .sidebar{font-size:11px!important;padding:6px!important}
+html.android-app #singleScreen .hand{right:170px!important;bottom:5px!important}
+html.android-app #singleScreen .hand .card{width:56px!important;height:79px!important;margin-left:-25px!important}
+html.android-app .online-play-layout{grid-template-columns:minmax(0,1fr) 165px!important}
+html.android-app .online-side{padding:5px!important;font-size:10px!important}
+html.android-app .online-side h2,html.android-app .online-side h3{font-size:13px!important;margin:3px 0!important}
+html.android-app .online-side button,html.android-app .online-side input,html.android-app .online-side select{font-size:10px!important;padding:5px!important}
+html.android-app #onlineGame .og-hand-table{bottom:7px!important;height:86px!important}
+html.android-app #onlineGame .og-hand-table .og-real-card{width:56px!important;height:79px!important;margin-left:-25px!important}
+html.android-app #onlineGame .og-pass-table{bottom:88px!important}
+html.android-app .og-seat{transform:scale(.72)!important}
+html.android-app .table-row{font-size:10px!important;padding:5px!important}
+html.android-app .lobby-player-list{font-size:9px!important;gap:3px 7px!important}
+@media(max-height:430px) and (orientation:landscape){
+ html.android-app .brand{transform:scale(.68);height:48px}
+ html.android-app .mode-card{height:calc(100vh - 62px)!important}
+ html.android-app .mode-art{height:52px!important;font-size:38px!important}
+ html.android-app .mode-desc{display:none!important}
+}
+
 </style></head><body>
 <div id="mainMenu" class="menu-screen">
   <div class="brand-title">HEARTS ARENA</div>
