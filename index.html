@@ -292,6 +292,31 @@ body.public-online .netbar{justify-content:flex-end}
 .og-hand-table .og-real-card:hover{transform:translateY(-10px)!important;z-index:1!important}
 .og-hand-table .og-real-card.selected,.og-hand-table .og-real-card.selected:hover{transform:translateY(-15px)!important;z-index:1!important}
 
+
+/* V46 online waiting-room layout */
+#onlineScreen{overflow:hidden!important}
+#waitingRoom.waiting-room{height:calc(100vh - 70px);max-width:1180px;margin:8px auto 0;padding:14px 18px;display:flex;flex-direction:column;overflow:hidden}
+#waitingRoom .waiting-top{flex:0 0 auto}
+#waitingRoom .seat-grid{flex:0 0 auto;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0 10px}
+#waitingRoom .wait-seat{min-height:128px;padding:10px}
+#waitingRoom .avatar{width:42px;height:42px;font-size:22px;margin-bottom:6px}
+#waitingRoom .ready-state{margin-top:6px}
+#waitingRoom .waiting-actions{flex:0 0 auto}
+#waitingRoom .wait-message{margin-top:7px}
+#waitingRoom .table-chat{flex:1 1 auto;width:100%;max-width:900px;min-height:120px;margin:10px auto 0;display:flex;flex-direction:column}
+#waitingRoom .table-chat .chat-log{flex:1 1 auto;height:auto;min-height:70px}
+#waitingRoom .chat-compose{flex:0 0 38px}
+.kick-btn{margin-top:7px;border:1px solid #d66b6b55;background:#6f1e26;color:#fff;border-radius:7px;padding:5px 9px;cursor:pointer;font-size:10px}
+.kick-btn:hover{background:#8a2731}
+.profile-edit{font-size:11px!important;padding:6px 9px!important;background:#ffffff18!important}
+@media(max-height:700px){
+ #waitingRoom.waiting-room{height:calc(100vh - 55px);padding:9px 14px}
+ #waitingRoom .seat-grid{margin:8px 0 6px}
+ #waitingRoom .wait-seat{min-height:105px}
+ #waitingRoom .avatar{width:34px;height:34px;font-size:18px;margin-bottom:4px}
+ #waitingRoom .table-chat{margin-top:6px;min-height:92px}
+}
+
 </style></head><body>
 <div id="mainMenu" class="menu-screen">
   <div class="brand-title">HEARTS ARENA</div>
@@ -530,10 +555,10 @@ const savedProfileRating=parseInt(localStorage.getItem('heartsRating')||'1200',1
 const onlineMe={name:savedProfileName,rating:savedProfileRating};
 function syncProfileUI(){const n=document.getElementById('profileNameView'),r=document.getElementById('profileRatingView');if(n)n.textContent=onlineMe.name;if(r)r.textContent=onlineMe.rating}
 function editProfile(){
- if(activeTableId){setNetState('Leave the table before changing your name');return}
+ if(activeTableId){showOnlineToast('Leave the table before changing your name.');return}
  const v=prompt('Player name',onlineMe.name);if(v===null)return;const name=v.trim().replace(/[<>]/g,'').slice(0,18);if(!name)return;
- onlineMe.name=name;localStorage.setItem('heartsPlayerName',name);reconnectToken=null;localStorage.removeItem('heartsReconnect');syncProfileUI();
- if(net){try{net.close()}catch{}} setTimeout(connectOnline,100);
+ onlineMe.name=name;localStorage.setItem('heartsPlayerName',name);syncProfileUI();
+ if(net&&net.readyState===1)sendNet('CHANGE_NAME',{name});else{reconnectToken=null;localStorage.removeItem('heartsReconnect');connectOnline()}
 }
 function openSingle(){document.getElementById('mainMenu').style.display='none';document.getElementById('onlineScreen').style.display='none';document.getElementById('singleScreen').style.display='block'}
 function openOnline(){syncProfileUI();document.getElementById('mainMenu').style.display='none';document.getElementById('singleScreen').style.display='none';document.getElementById('onlineScreen').style.display='block';const u=document.getElementById('serverUrl');if(u)u.value=defaultServerUrl();renderLobby();if(!net||net.readyState>1)setTimeout(connectOnline,80)}
@@ -586,6 +611,7 @@ function handleNet(m){
  if(m.type==='ROUND_END'){showOnlineRoundEnd(m);}
  if(m.type==='MATCH_END'){showOnlineMatchEnd(m);}
  if(m.type==='CHAT'){receiveChat(m);}
+ if(m.type==='KICKED'){activeTableId=null;document.getElementById('waitingRoom').style.display='none';document.getElementById('tableList').style.display='block';document.querySelector('.lobby-columns').style.display='grid';showOnlineToast('The host removed you from the table.');sendNet('LIST_TABLES');}
  if(m.type==='ERROR'){showOnlineToast(m.message||'Online error');}
  if(m.type==='ERROR')alert(m.message||'Server error');
 }
@@ -610,7 +636,7 @@ function renderWaiting(){
   const pl=t.players[i];
   if(!pl)return `<div class="wait-seat empty-seat"><div class="avatar">+</div><b>Open seat</b><span>Waiting for player</span></div>`;
   const host=i===0;
-  return `<div class="wait-seat"><div class="avatar">♥</div><b>${pl[0]} ${host?'<em>HOST</em>':''}</b><span class="wait-rating">${pl[1]??1200} rating</span><span class="${t.ready[pl[2]]?'ready-state yes':'ready-state'}">${t.ready[pl[2]]?'READY ✓':'Not ready'}</span></div>`;
+  return `<div class="wait-seat"><div class="avatar">♥</div><b>${pl[0]} ${host?'<em>HOST</em>':''}</b><span class="wait-rating">${pl[1]??1200} rating</span><span class="${t.ready[pl[2]]?'ready-state yes':'ready-state'}">${t.ready[pl[2]]?'READY ✓':'Not ready'}</span>${t.hostMe&&!host?`<button class="kick-btn" onclick="kickPlayer('${pl[2]}','${escChat(pl[0])}')">Remove</button>`:''}</div>`;
  }).join('');
  document.getElementById('waitSeats').innerHTML=seats;
  const meReady=!!t.ready?.[clientId];
@@ -620,6 +646,7 @@ function renderWaiting(){
  start.style.display=t.hostMe?'inline-block':'none';start.disabled=!allReady;
  document.getElementById('waitMessage').textContent=t.players.length<4?`Waiting for ${4-t.players.length} more player${4-t.players.length===1?'':'s'}…`:allReady?'All players ready. Host can start.':'Waiting for everyone to be ready…';
 }
+function kickPlayer(id,name){if(!confirm('Remove '+name+' from the table?'))return;sendNet('KICK_PLAYER',{playerId:id})}
 function toggleReady(){if(net&&net.readyState===1){sendNet('TOGGLE_READY',{id:activeTableId});return;}setNetState('Connect to the server first')}
 function leaveWaiting(){
  const leaving=activeTableId;
