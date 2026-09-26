@@ -338,6 +338,18 @@ body.public-online .netbar{justify-content:flex-end}
 #onlineGame .og-hand-table .og-real-card{display:block!important;visibility:visible!important;opacity:1!important}
 @media(max-width:1000px){.online-play-layout{grid-template-columns:minmax(0,1fr) 230px}}
 
+
+/* V48 online hand visibility correction: cards sit fully inside the felt */
+#onlineGame .og-table{overflow:hidden!important;padding-bottom:150px!important}
+#onlineGame .og-hand-table{position:absolute!important;bottom:14px!important;height:136px!important;align-items:flex-end!important;z-index:55!important}
+#onlineGame .og-hand-table .og-real-card{position:relative!important;bottom:0!important}
+#onlineGame .og-pass-table{bottom:150px!important;z-index:60!important}
+@media(max-height:720px){
+ #onlineGame .og-table{padding-bottom:126px!important}
+ #onlineGame .og-hand-table{bottom:10px!important;height:116px!important}
+ #onlineGame .og-pass-table{bottom:126px!important}
+}
+
 </style></head><body>
 <div id="mainMenu" class="menu-screen">
   <div class="brand-title">HEARTS ARENA</div>
