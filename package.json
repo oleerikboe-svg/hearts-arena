@@ -1,0 +1,14 @@
+{
+  "name": "hearts-arena",
+  "version": "0.44.0",
+  "private": true,
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
