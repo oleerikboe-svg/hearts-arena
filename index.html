@@ -350,6 +350,14 @@ body.public-online .netbar{justify-content:flex-end}
  #onlineGame .og-pass-table{bottom:126px!important}
 }
 
+
+/* V49: full online hand + all lobby players visible */
+#onlineGame .og-hand-table{bottom:24px!important}
+#onlineGame .og-pass-table{bottom:160px!important}
+.lobby-player-list{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 10px;align-items:center}
+.lobby-player-list .player{display:flex!important;margin:0!important;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.table-row{grid-template-columns:1.05fr .9fr 2.2fr 70px!important}
+@media(max-width:900px){.lobby-player-list{grid-template-columns:1fr}.table-row{grid-template-columns:1fr!important}}
 </style></head><body>
 <div id="mainMenu" class="menu-screen">
   <div class="brand-title">HEARTS ARENA</div>
@@ -598,7 +606,7 @@ function openOnline(){syncProfileUI();document.getElementById('mainMenu').style.
 function backMenu(){document.getElementById('singleScreen').style.display='none';document.getElementById('onlineScreen').style.display='none';document.getElementById('mainMenu').style.display='block'}
 function toggleHost(){let x=document.getElementById('hostPanel');x.style.display=x.style.display==='none'?'block':'none'}
 function renderLobby(){
- document.getElementById('tableList').innerHTML=demoTables.length?demoTables.map(t=>`<div class="table-row" onclick="openTable(${t.id})"><div><div class="table-id">#${t.id} · ${t.name}</div><div class="table-host">Host: ${t.host}</div></div><div class="rule-tags"><span class="tag">${t.timer}</span><span class="tag">Target ${t.target}</span><span class="tag">J♦ ${t.jd?'ON':'OFF'}</span></div><div>${t.players.map((p,i)=>`<span class="player"><i class="dot ${i%3===1?'open':''}"></i>${p[0]}${p[1]?` <span class="rating">${p[1]}</span>`:''}</span>`).join('')}</div>${t.member?'<span class="joined-mark">Joined ✓</span>':`<button class="join-btn" onclick="event.stopPropagation();joinDemo(${t.id})">${t.players.length<4?'Join':'Full'}</button>`}</div>`).join(''):`<div class="empty-lobby"><div class="empty-heart">♡</div><b>No public tables yet</b><span>Create a table to become the host.</span></div>`;
+ document.getElementById('tableList').innerHTML=demoTables.length?demoTables.map(t=>`<div class="table-row" onclick="openTable(${t.id})"><div><div class="table-id">#${t.id} · ${t.name}</div><div class="table-host">Host: ${t.host}</div></div><div class="rule-tags"><span class="tag">${t.timer}</span><span class="tag">Target ${t.target}</span><span class="tag">J♦ ${t.jd?'ON':'OFF'}</span></div><div class="lobby-player-list">${t.players.map((p,i)=>`<span class="player"><i class="dot ${i%3===1?'open':''}"></i>${p[0]}${p[1]?` <span class="rating">${p[1]}</span>`:''}</span>`).join('')}</div>${t.member?'<span class="joined-mark">Joined ✓</span>':`<button class="join-btn" onclick="event.stopPropagation();joinDemo(${t.id})">${t.players.length<4?'Join':'Full'}</button>`}</div>`).join(''):`<div class="empty-lobby"><div class="empty-heart">♡</div><b>No public tables yet</b><span>Create a table to become the host.</span></div>`;
 }
 function createDemoTable(){
  let id=Math.floor(300+Math.random()*600),name=document.getElementById('hostName').value||'My Hearts Table';
