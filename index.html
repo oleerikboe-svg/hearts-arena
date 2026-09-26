@@ -358,6 +358,12 @@ body.public-online .netbar{justify-content:flex-end}
 .lobby-player-list .player{display:flex!important;margin:0!important;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .table-row{grid-template-columns:1.05fr .9fr 2.2fr 70px!important}
 @media(max-width:900px){.lobby-player-list{grid-template-columns:1fr}.table-row{grid-template-columns:1fr!important}}
+
+/* V50 interaction lock: online cards only move vertically; never rise above neighbours */
+#onlineGame .og-hand-table .og-real-card:hover{transform:translateY(-10px)!important;z-index:auto!important}
+#onlineGame .og-hand-table .og-real-card.selected,
+#onlineGame .og-hand-table .og-real-card.selected:hover,
+#onlineGame .og-hand-table .og-real-card.received-card{transform:translateY(-15px)!important;z-index:auto!important}
 </style></head><body>
 <div id="mainMenu" class="menu-screen">
   <div class="brand-title">HEARTS ARENA</div>
