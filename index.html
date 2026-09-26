@@ -260,6 +260,38 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 body.public-online .netbar #serverUrl,body.public-online .netbar #serverUrl+button{display:none!important}
 body.public-online .netbar{justify-content:flex-end}
+
+/* V45 desktop fit + larger hands. Keep V35 hover/selection interaction unchanged. */
+#singleScreen .app{height:100vh;min-height:0;grid-template-columns:minmax(0,1fr) 250px;overflow:hidden}
+#singleScreen .table{height:100vh!important;min-height:0!important;padding-bottom:132px!important}
+#singleScreen .hand{position:fixed!important;left:18px!important;right:268px!important;bottom:6px!important;height:126px!important;z-index:40!important;display:flex!important;visibility:visible!important;justify-content:center!important;align-items:flex-end!important;overflow:visible!important}
+#singleScreen .hand .card{width:92px!important;height:129px!important;margin-left:-34px!important;flex:0 0 auto!important}
+#singleScreen .hand .card:first-child{margin-left:0!important}
+#singleScreen .played{width:78px!important;height:110px!important}
+#singleScreen .passbtn{bottom:138px!important}
+#onlineScreen .online-table-wrap{height:calc(100vh - 82px)!important;min-height:0!important;max-width:min(1280px,97vw)!important}
+#onlineScreen .og-hand-table{bottom:6px!important;height:130px!important;width:96%!important;z-index:40!important;overflow:visible!important}
+#onlineScreen .og-hand-table .og-real-card{width:92px!important;height:129px!important;margin-left:-34px!important;flex:0 0 auto!important}
+#onlineScreen .og-hand-table .og-real-card:first-child{margin-left:0!important}
+#onlineScreen .og-pass-table{bottom:138px!important}
+#onlineScreen .og-trick-center .og-real-card{width:74px!important;height:104px!important}
+@media(max-width:1100px){
+ #singleScreen .app{grid-template-columns:minmax(0,1fr) 220px}
+ #singleScreen .hand{right:238px!important}
+ #singleScreen .hand .card,#onlineScreen .og-hand-table .og-real-card{width:84px!important;height:118px!important;margin-left:-34px!important}
+}
+@media(max-height:720px){
+ #singleScreen .table{padding-bottom:112px!important}
+ #singleScreen .hand,#onlineScreen .og-hand-table{height:108px!important}
+ #singleScreen .hand .card,#onlineScreen .og-hand-table .og-real-card{width:78px!important;height:110px!important;margin-left:-32px!important}
+ #singleScreen .passbtn,#onlineScreen .og-pass-table{bottom:114px!important}
+}
+/* V35 interaction lock */
+#singleScreen .hand .card:hover{transform:translateY(-10px)!important;z-index:1!important}
+#singleScreen .hand .card.selected,#singleScreen .hand .card.selected:hover{transform:translateY(-15px)!important;z-index:1!important}
+.og-hand-table .og-real-card:hover{transform:translateY(-10px)!important;z-index:1!important}
+.og-hand-table .og-real-card.selected,.og-hand-table .og-real-card.selected:hover{transform:translateY(-15px)!important;z-index:1!important}
+
 </style></head><body>
 <div id="mainMenu" class="menu-screen">
   <div class="brand-title">HEARTS ARENA</div>
