@@ -345,7 +345,11 @@ async function showTrickWinner(w,p,cards){
   await sleep(1050);clones.forEach(x=>x.c.remove());
 }
 
-function cardAsset(c){return `assets/cards/${c.r}${c.s}.jpg`}
+function cardAsset(c){
+ const suits={H:'hearts',C:'clubs',D:'diamonds',S:'spades'},ranks={A:'ace',K:'king',Q:'queen',J:'jack'};
+ const suit=suits[c.s],rank=ranks[c.r]||String(c.r);
+ return 'https://raw.githubusercontent.com/AustinGabriel/Public-Domain-and-CC0-Playing-Cards/f433681a3fe42708105a73def58f1105f7e92bff/png%20cards/card%20fronts/'+suit+'/'+rank+'%20of%20'+suit+'.png';
+}
 function cardFaceHTML(c){return `<img class="card-art" src="${cardAsset(c)}" alt="${c.r}${SYM[c.s]}" draggable="false">`}
 function tableSlotRect(i){
   const trick=document.getElementById('trick').getBoundingClientRect();
