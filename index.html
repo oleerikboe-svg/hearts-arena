@@ -1,0 +1,740 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hearts Arena – Browser Test</title>
+<style>
+:root{--felt:#075c3d;--felt2:#033d29;--gold:#e5bd63;--panel:#10211d;--text:#f7f5ec;--muted:#aab8b2;--red:#c82f3e}*{box-sizing:border-box}body{margin:0;background:#081411;color:var(--text);font:15px system-ui,Segoe UI,sans-serif;overflow-x:hidden}.app{min-height:100vh;display:grid;grid-template-columns:1fr 280px}.table{position:relative;min-height:100vh;background:radial-gradient(ellipse at center,var(--felt),var(--felt2));padding:20px 24px 155px}.topbar{display:flex;justify-content:space-between;gap:12px;align-items:center}.brand{font-weight:900;letter-spacing:.08em;color:var(--gold);font-size:20px}.pill{background:#071f18bb;border:1px solid #ffffff18;border-radius:999px;padding:7px 12px}.players{position:absolute;z-index:2;inset:75px 20px 170px;pointer-events:none}.player{position:absolute;min-width:135px;text-align:center;background:#071b16c9;border:1px solid #ffffff1b;border-radius:16px;padding:9px}.player.active{outline:2px solid var(--gold);box-shadow:0 0 24px #e5bd6344}.north{top:0;left:50%;transform:translateX(-50%)}.west{left:0;top:48%;transform:translateY(-50%)}.east{right:0;top:48%;transform:translateY(-50%)}.south{bottom:0;left:50%;transform:translateX(-50%)}.avatar{font-size:23px}.pname{font-weight:800}.score{font-size:12px;color:var(--muted)}.center{position:absolute;z-index:3;left:50%;top:43%;transform:translate(-50%,-50%);width:430px;text-align:center}.status{font-size:16px;font-weight:800;margin-bottom:14px;min-height:24px}.trick{height:205px;position:relative}.played{position:absolute;width:74px;height:104px;border-radius:9px;background:#fff;color:#111;border:1px solid #bbb;box-shadow:0 8px 18px #0007;padding:7px;font-size:21px;font-weight:800;text-align:left;animation:pop .2s ease}.played.red{color:#c51f34}.pc0{bottom:0;left:50%;transform:translateX(-50%)}.pc1{top:50%;left:35px;transform:translateY(-50%)}.pc2{top:0;left:50%;transform:translateX(-50%)}.pc3{top:50%;right:35px;transform:translateY(-50%)}@keyframes pop{from{opacity:0;scale:.8}to{opacity:1;scale:1}}
+.pass-fly{position:fixed;z-index:50;width:72px;height:108px;border-radius:9px;background:#fff;color:#121212;border:1px solid #bbb;box-shadow:0 10px 28px #0009;padding:7px;font-size:20px;font-weight:900;text-align:left;pointer-events:none;transition:transform 1.05s cubic-bezier(.2,.8,.2,1),opacity 1.05s ease}.pass-fly.red{color:#c51f34}.pass-flash{position:fixed;z-index:49;left:50%;top:50%;transform:translate(-50%,-50%);background:#071b16ee;border:1px solid #e5bd6388;border-radius:999px;padding:12px 22px;color:#e5bd63;font-weight:900;letter-spacing:.03em;box-shadow:0 10px 35px #0008;animation:passFlash 1s ease forwards;pointer-events:none}@keyframes passFlash{0%{opacity:0;scale:.85}20%,70%{opacity:1;scale:1}100%{opacity:0;scale:1.08}}.receive-fly{position:fixed;z-index:55;width:72px;height:108px;border-radius:9px;background:linear-gradient(135deg,#243b72,#12224a);border:2px solid #e5bd63;box-shadow:0 10px 28px #0009;pointer-events:none;transition:transform 1.05s cubic-bezier(.2,.8,.2,1),opacity 1.05s ease}.receive-fly:after{content:'♥';position:absolute;inset:0;display:grid;place-items:center;color:#e5bd63;font-size:30px;opacity:.75}.receive-reveal{position:fixed;z-index:56;width:72px;height:108px;border-radius:9px;background:#fff;border:2px solid #e5bd63;box-shadow:0 10px 30px #000a;padding:7px;font-size:20px;font-weight:900;text-align:left;animation:receiveReveal 1.15s ease forwards;pointer-events:none}.receive-reveal.sH{color:#c51f34}.receive-reveal.sD{color:#d45a00}.receive-reveal.sS{color:#1f4d8f}.receive-reveal.sC{color:#176b3a}@keyframes receiveReveal{0%{opacity:0;transform:translateY(16px) scale(.82) rotateY(90deg)}25%,72%{opacity:1;transform:translateY(0) scale(1) rotateY(0)}100%{opacity:0;transform:translateY(-8px) scale(1.04)}}.hand{position:absolute;z-index:10;bottom:18px;left:18px;right:18px;height:130px;display:flex;justify-content:center;align-items:end}.card{width:72px;height:108px;border-radius:9px;background:#fff;color:#121212;border:1px solid #bbb;box-shadow:0 6px 14px #0007;margin-left:-20px;padding:7px;font-size:20px;font-weight:900;text-align:left;cursor:pointer;transition:.13s transform,.13s filter}.card:first-child{margin-left:0}.card:nth-child(n){position:relative;z-index:1}.card:hover{z-index:1}.card.selected{z-index:20}.card.red{color:#c51f34}.card.sH,.played.sH,.pass-fly.sH{color:#c51f34}.card.sD,.played.sD,.pass-fly.sD{color:#d45a00}.card.sS,.played.sS,.pass-fly.sS{color:#1f4d8f}.card.sC,.played.sC,.pass-fly.sC{color:#176b3a}.card .corner,.played .corner{font-weight:1000;text-shadow:0 1px 0 #fff}.card .suitbadge,.played .suitbadge{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;border:2px solid currentColor;border-radius:50%;margin-left:4px;font-size:19px;line-height:1;background:#fff}.card .big,.played .big{font-size:30px!important;opacity:.55!important;font-weight:1000;text-shadow:0 1px 0 #fff}.card:hover,.card.selected{transform:translateY(-15px)}.card.illegal{filter:brightness(.58);cursor:not-allowed}.card .big{font-size:22px;text-align:center;margin-top:14px;opacity:.22;pointer-events:none}.passbtn{position:absolute;z-index:12;bottom:145px;left:50%;transform:translateX(-50%);border:0;background:var(--gold);color:#241b09;font-weight:900;padding:10px 18px;border-radius:999px;cursor:pointer}.passbtn:disabled{opacity:.35}.side{background:#0b1815;border-left:1px solid #ffffff13;padding:18px;overflow:auto}.side h3{margin:8px 0 10px;color:var(--gold)}button,select{font:inherit}.btn{width:100%;border:1px solid #ffffff1d;background:#142722;color:#fff;padding:10px;border-radius:10px;margin:5px 0;cursor:pointer}.settings{display:grid;gap:8px}.settings label{font-size:12px;color:var(--muted)}select{width:100%;background:#142722;color:#fff;border:1px solid #ffffff1d;border-radius:8px;padding:8px}.history{font-size:12px;color:#c7d2cd;display:grid;gap:5px}.modal{position:fixed;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;z-index:20}.modal.hidden{display:none}.box{width:min(480px,90vw);background:#10211d;border:1px solid #ffffff20;border-radius:20px;padding:25px;box-shadow:0 25px 80px #000}.box h1{color:var(--gold)}.stand{display:grid;gap:7px;margin:16px 0}.stand div{display:flex;justify-content:space-between;background:#ffffff0a;padding:9px;border-radius:8px}.tiny{font-size:12px;color:var(--muted)}@media(max-width:850px){.app{grid-template-columns:1fr}.side{display:none}.center{width:330px}.west,.east{top:43%}.table{min-height:100vh}.card{width:62px;height:98px;margin-left:-24px}}
+
+/* v6 readability, pacing and trick feedback */
+.card.sH,.card.sD,.played.sH,.played.sD,.pass-fly.sH,.pass-fly.sD,.receive-reveal.sH,.receive-reveal.sD{color:#c51f34}
+.card.sS,.card.sC,.played.sS,.played.sC,.pass-fly.sS,.pass-fly.sC,.receive-reveal.sS,.receive-reveal.sC{color:#111}
+.card .suitbadge,.played .suitbadge,.pass-fly .suitbadge,.receive-reveal .suitbadge{width:30px;height:30px;border-width:2.5px;font-size:21px;background:#fff;box-shadow:0 1px 2px #0002}
+.card .big,.played .big,.receive-reveal .big{font-size:34px!important;opacity:.72!important;margin-top:10px!important}
+.player.active{outline:3px solid var(--gold);box-shadow:0 0 34px #e5bd6388;animation:turnPulse 1.25s ease-in-out infinite}
+.turntag{display:inline-block;margin-top:5px;padding:3px 8px;border-radius:999px;background:var(--gold);color:#241b09;font-size:10px;font-weight:1000;letter-spacing:.06em}
+.player.trickwinner{}
+.trick-result{position:fixed;z-index:70;left:50%;top:43%;transform:translate(-50%,-50%);background:#071b16f2;border:2px solid var(--gold);border-radius:18px;padding:14px 24px;text-align:center;box-shadow:0 16px 50px #000a;pointer-events:none;animation:resultIn .35s ease}
+.trick-result strong{display:block;color:var(--gold);font-size:20px}.trick-result span{font-size:13px;color:#dbe4df}
+@keyframes turnPulse{50%{box-shadow:0 0 48px #e5bd63bb}}
+
+@keyframes resultIn{from{opacity:0;transform:translate(-50%,-44%) scale(.9)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+
+/* v7 classic card face + trick collection */
+.card,.played,.pass-fly,.receive-reveal{font-family:Georgia,"Times New Roman",serif;background:#fff;color:#111;border:2px solid #d7d7d7}
+.card.sH,.card.sD,.played.sH,.played.sD,.pass-fly.sH,.pass-fly.sD,.receive-reveal.sH,.receive-reveal.sD{color:#d40000}
+.card.sS,.card.sC,.played.sS,.played.sC,.pass-fly.sS,.pass-fly.sC,.receive-reveal.sS,.receive-reveal.sC{color:#080808}
+.card .corner,.played .corner,.pass-fly .corner,.receive-reveal .corner{display:flex;align-items:center;gap:3px;font-size:25px;line-height:1;font-weight:900;letter-spacing:-1px}
+.card .suitbadge,.played .suitbadge,.pass-fly .suitbadge,.receive-reveal .suitbadge{border:0!important;border-radius:0!important;width:auto!important;height:auto!important;box-shadow:none!important;background:transparent!important;font-size:25px!important;margin-left:1px!important}
+.card .big,.played .big,.receive-reveal .big{font-size:40px!important;opacity:1!important;text-align:center;margin-top:12px!important;font-family:Georgia,"Times New Roman",serif}
+.trick-collect{position:fixed!important;z-index:85!important;margin:0!important;transition:transform .95s cubic-bezier(.25,.8,.25,1),opacity .95s ease!important;pointer-events:none!important}
+
+/* v9 smooth card-to-table motion */
+.play-flight{position:fixed;z-index:95;width:74px;height:104px;border-radius:9px;background:#fff;border:2px solid #d7d7d7;box-shadow:0 10px 28px #0009;padding:7px;font:900 21px Georgia,"Times New Roman",serif;pointer-events:none;will-change:transform,opacity;transition:transform .48s cubic-bezier(.22,.75,.22,1),opacity .48s ease}
+.play-flight.sH,.play-flight.sD{color:#d40000}.play-flight.sS,.play-flight.sC{color:#080808}
+.play-flight .corner{display:flex;align-items:center;gap:3px;font-size:25px;line-height:1}.play-flight .suitbadge{font-size:25px}.play-flight .big{font-size:40px;text-align:center;margin-top:12px}
+.played{animation:none;will-change:transform,opacity}.card{will-change:transform}.player.active{animation:none;transition:outline-color .2s ease,box-shadow .2s ease}
+
+.card.just-received{transform:translateY(-22px)!important;outline:3px solid rgba(255,215,80,.95)!important;box-shadow:0 0 0 2px rgba(255,255,255,.85),0 0 18px rgba(255,215,80,.75),0 10px 20px rgba(0,0,0,.28)!important;z-index:40!important}
+.onlinebox{padding:9px;border:1px solid #ffffff20;border-radius:10px;background:#071b1666}.onlinebox input{box-sizing:border-box;width:100%;margin-top:7px;padding:8px;border-radius:7px;border:1px solid #ffffff30;background:#061511;color:#fff}.smallbtn{padding:7px 9px;font-size:12px;flex:1}
+.menu-screen,.online-screen{min-height:100vh;box-sizing:border-box;padding:48px max(24px,6vw);background:radial-gradient(circle at 50% 20%,#174e3d,#071b16 65%);color:white;font-family:Arial,sans-serif}
+.brand-title{text-align:center;font-size:52px;font-weight:900;letter-spacing:4px}.brand-sub{text-align:center;opacity:.72;margin:8px 0 38px}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;max-width:1050px;margin:auto}.mode-card{min-height:390px;border-radius:24px;border:1px solid #ffffff2b;background:#ffffff0d;color:white;cursor:pointer;box-shadow:0 18px 45px #0006;transition:.22s transform,.22s background}.mode-card:hover{transform:translateY(-7px);background:#ffffff16}.mode-art{height:230px;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:105px;text-shadow:0 10px 24px #0008}.single .mode-art{color:#d71936}.online .mode-art{font-size:62px;word-spacing:12px}.mode-name{font-size:25px;font-weight:900;letter-spacing:1.5px}.mode-desc{margin:12px auto 0;max-width:310px;opacity:.72;line-height:1.45}
+.back-menu{border:0;background:#ffffff12;color:white;border-radius:9px;padding:9px 13px;cursor:pointer}
+#singleScreen>.back-menu{position:fixed;left:14px;top:14px;z-index:100}
+.online-screen{padding-top:30px}.online-head{display:flex;justify-content:space-between;align-items:end;max-width:1100px;margin:auto}.online-head h1{font-size:38px;margin:22px 0 2px}.online-head p{margin:0;opacity:.65}.host-btn,.join-btn{border:0;border-radius:9px;padding:11px 17px;background:#dce9fa;color:#153b61;font-weight:800;cursor:pointer}.host-panel{max-width:1060px;margin:25px auto 18px;padding:20px;background:#ffffff0d;border:1px solid #ffffff20;border-radius:15px}.host-panel h2{margin-top:0}.host-grid{display:grid;grid-template-columns:2fr 1fr 1.3fr 1fr;gap:12px;margin-bottom:15px}.host-grid label{font-size:12px;font-weight:bold;opacity:.85}.host-grid input,.host-grid select{width:100%;box-sizing:border-box;margin-top:6px;padding:9px;border-radius:7px;border:1px solid #ffffff25;background:#0a241d;color:white}
+.lobby-columns,.table-row{display:grid;grid-template-columns:1.1fr 1fr 2fr 70px;gap:15px;align-items:center;max-width:1100px;margin:auto}.lobby-columns{font-size:11px;font-weight:bold;opacity:.5;padding:28px 17px 8px}.table-row{padding:16px 17px;border-top:1px solid #ffffff17;background:#ffffff05}.table-row:last-child{border-bottom:1px solid #ffffff17}.table-id{font-size:18px;font-weight:bold}.table-host{font-size:12px;opacity:.6;margin-top:4px}.rule-tags{display:flex;gap:6px;flex-wrap:wrap}.tag{padding:4px 7px;border-radius:5px;background:#ffffff10;font-size:12px}.table-row .player{display:inline-flex;align-items:center;margin-right:11px;font-weight:700}.dot{width:9px;height:9px;border-radius:2px;background:#16c23c;margin-right:6px}.dot.open{background:#19b7d9}.rating{font-weight:400;opacity:.75;margin-left:5px}.online-note{max-width:1100px;margin:22px auto;opacity:.5;font-size:12px}
+@media(max-width:750px){.mode-grid{grid-template-columns:1fr}.mode-card{min-height:300px}.mode-art{height:160px}.lobby-columns{display:none}.table-row{grid-template-columns:1fr}.host-grid{grid-template-columns:1fr 1fr}}
+
+.empty-lobby{max-width:1100px;margin:auto;padding:65px 20px;text-align:center;border-top:1px solid #ffffff17;border-bottom:1px solid #ffffff17;background:#ffffff04;color:#ffffffb8}.empty-lobby b{display:block;font-size:19px}.empty-lobby span{display:block;margin-top:7px;font-size:13px;opacity:.65}.empty-heart{font-size:45px;margin-bottom:10px}
+#singleScreen{position:relative;padding-top:0}
+#singleScreen>.back-menu{top:10px;left:10px}
+#singleScreen .playerName,#singleScreen .player-name,#singleScreen .name{z-index:3}
+#singleScreen .score,#singleScreen .scorebox,#singleScreen .scores{z-index:8}
+
+#singleScreen [class*="seat"] [class*="name"],#singleScreen [class*="player"] [class*="name"]{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.joined-mark{font-size:12px;font-weight:800;color:#9ee7ad;text-align:center}
+.rating-info{max-width:1060px;margin:22px auto 0;padding:16px 20px;border:1px solid #ffffff18;border-radius:12px;background:#ffffff08;display:flex;gap:18px;align-items:center}.rating-info b{white-space:nowrap}.rating-info span{font-size:12px;line-height:1.5;opacity:.75}
+/* V19 single-player seat/score collision fix: names are constrained to their seat area and score UI stays above them. */
+#singleScreen .pname{max-width:120px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;pointer-events:none}
+#singleScreen .seat{overflow:visible}
+#singleScreen #scores,#singleScreen .scores,#singleScreen .scoreboard{position:relative!important;z-index:60!important}
+
+.table-row{cursor:pointer}.table-row:hover{background:#ffffff0a}
+.waiting-room{max-width:1100px;margin:28px auto 0;padding:24px;border:1px solid #ffffff20;border-radius:18px;background:#ffffff08;box-shadow:0 18px 45px #0004}.waiting-top{display:flex;align-items:center;gap:18px}.waiting-top h2{margin:0 0 8px}.waiting-top>div:nth-child(2){flex:1}.host-badge{font-size:11px;font-weight:900;letter-spacing:1px;padding:7px 10px;border-radius:7px;background:#dce9fa;color:#153b61}.seat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:28px 0}.wait-seat{min-height:175px;border:1px solid #ffffff20;border-radius:14px;background:#061b1588;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.empty-seat{border-style:dashed;opacity:.55}.waiting-room .avatar{width:54px;height:54px;border-radius:50%;background:#ffffff0d;display:flex;align-items:center;justify-content:center;font-size:28px;color:#d71936;margin-bottom:10px}.wait-seat b{font-size:15px}.wait-seat em{font-style:normal;font-size:9px;padding:3px 5px;border-radius:4px;background:#ffffff17;margin-left:4px}.wait-rating{font-size:12px;opacity:.65;margin-top:5px}.ready-state{font-size:11px;margin-top:12px;color:#ffffff70}.ready-state.yes{color:#75e492;font-weight:900}.waiting-actions{text-align:center}.ready-btn{border:0;border-radius:9px;padding:12px 28px;background:#2baf55;color:white;font-weight:900;cursor:pointer;margin-right:8px}.host-btn:disabled{opacity:.35;cursor:not-allowed}.wait-message{text-align:center;margin-top:13px;font-size:12px;opacity:.6}
+@media(max-width:750px){.seat-grid{grid-template-columns:1fr 1fr}}
+.netbar{max-width:1100px;margin:0 auto 18px;display:flex;justify-content:flex-end;align-items:center;gap:8px;font-size:11px;opacity:.85}.netbar input{width:180px;padding:7px;border-radius:7px;border:1px solid #ffffff22;background:#061b15;color:#fff}.netbar #netDot{width:8px;height:8px;border-radius:50%;background:#888}.netbar #netDot.connected{background:#32d45c;box-shadow:0 0 8px #32d45c}#singleScreen .table .player{display:block!important;min-width:135px!important} #singleScreen .table .pname,#singleScreen .table .score{display:block!important;position:static!important;max-width:none!important;overflow:visible!important;white-space:nowrap!important}.online-game{max-width:1100px;margin:24px auto;padding:20px;border:1px solid #ffffff20;border-radius:18px;background:#062019}.og-head{display:flex;justify-content:space-between}.og-status{text-align:center;font-weight:800;margin:20px}.og-opponents{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.og-opponents div{padding:10px;background:#ffffff09;border-radius:9px}.og-opponents span{display:block;font-size:11px;opacity:.65;margin-top:3px}.og-trick{min-height:130px;display:flex;align-items:center;justify-content:center;gap:8px}.og-hand{display:flex;justify-content:center;gap:2px;flex-wrap:wrap}.og-card{width:54px;height:78px;background:#fff;color:#111;border:0;border-radius:6px;font-family:Georgia;font-size:18px;box-shadow:0 3px 8px #0005}.og-card span{display:block}.og-card.red{color:#c7192d}.og-pass{text-align:center;margin-top:14px}
+.online-table-wrap{max-width:1180px;margin:12px auto!important;padding:0!important;background:transparent!important;border:0!important}.og-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 4px 12px;color:white}.og-table{height:min(720px,78vh);min-height:560px;position:relative;border-radius:44px;background:radial-gradient(ellipse at center,#19684d 0%,#0d4a37 55%,#073326 100%);border:10px solid #4a2b18;box-shadow:inset 0 0 0 3px #8b633e,inset 0 0 80px #0005,0 18px 45px #0008;overflow:hidden}.og-seat{position:absolute;min-width:150px;padding:9px 12px;text-align:center;border:1px solid #ffffff22;border-radius:14px;background:#061b15dc;color:white;z-index:5;box-shadow:0 5px 14px #0005}.og-seat b,.og-seat span{display:block}.og-seat span{font-size:11px;opacity:.68;margin-top:2px}.og-seat em{display:inline-block;margin-top:5px;font-style:normal;font-size:9px;font-weight:900;color:#82e89b}.og-seat.active{outline:2px solid #8beaa3;box-shadow:0 0 22px #42d66b66}.og-avatar{font-size:18px}.og-north{top:16px;left:50%;transform:translateX(-50%)}.og-south{bottom:145px;left:50%;transform:translateX(-50%)}.og-west{left:18px;top:45%;transform:translateY(-50%)}.og-east{right:18px;top:45%;transform:translateY(-50%)}.og-center-status{position:absolute;left:50%;top:37%;transform:translate(-50%,-50%);color:#ffffffb8;font-size:13px;font-weight:800;letter-spacing:.4px}.og-trick-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;gap:8px;min-height:100px;align-items:center}.og-hand-table{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;justify-content:center;width:88%;height:116px;align-items:flex-end}.og-real-card{width:70px;height:102px;margin-left:-25px;background:#fffdf8;color:#111;border:1px solid #bbb;border-radius:8px;position:relative;font-family:Georgia,serif;box-shadow:0 4px 10px #0007;transition:transform .18s ease;flex:0 0 auto}.og-real-card:first-child{margin-left:0}.og-hand-table .og-real-card:hover,.og-real-card.selected{transform:translateY(-14px);z-index:1}.og-real-card.red{color:#c7192d}.og-index{position:absolute;left:7px;top:5px;font-style:normal;font-size:17px;line-height:16px;text-align:center}.og-index b,.og-index i{display:block;font-style:normal}.og-bigpip{font-size:36px;position:absolute;left:50%;top:53%;transform:translate(-50%,-50%)}.og-trick-center .og-real-card{margin-left:0;width:62px;height:90px}.og-pass-table{position:absolute;bottom:138px;left:50%;transform:translateX(-50%);z-index:8}
+@media(max-width:760px){.og-table{min-height:540px}.og-real-card{width:58px;height:88px;margin-left:-27px}.og-seat{min-width:105px;font-size:11px}.og-west{left:5px}.og-east{right:5px}}
+
+.og-flight{position:fixed;z-index:999;pointer-events:none;transition:transform .48s cubic-bezier(.2,.75,.2,1),opacity .48s}.og-flight .og-real-card{margin:0}.og-flight.og-south{left:50%;bottom:10%;transform:translate(-50%,0)}.og-flight.og-north{left:50%;top:8%;transform:translate(-50%,0)}.og-flight.og-west{left:8%;top:48%;transform:translate(0,-50%)}.og-flight.og-east{right:8%;top:48%;transform:translate(0,-50%)}.og-flight.to-center{left:50%;right:auto;top:50%;bottom:auto;transform:translate(-50%,-50%) scale(.92);opacity:.92}.og-table.pass-flash{animation:passGlow .7s ease}@keyframes passGlow{0%,100%{box-shadow:inset 0 0 0 3px #8b633e,inset 0 0 80px #0005,0 18px 45px #0008}50%{box-shadow:inset 0 0 0 3px #d9bf73,inset 0 0 90px #e6cf7040,0 18px 45px #0008}}
+/* V26 shared illustrated deck */
+.card,.played,.og-real-card,.pass-fly,.receive-reveal{padding:0!important;background:transparent!important;border:0!important;overflow:hidden;border-radius:8px;box-shadow:0 6px 15px #0008}
+.card-art{display:block;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none}
+.card{width:72px;height:101px}.played{width:72px;height:101px}.og-real-card{width:70px;height:98px}.og-trick-center .og-real-card{width:64px;height:90px}
+.card.illegal{filter:brightness(.55) saturate(.7)}.card.selected,.og-real-card.selected{outline:3px solid #e5bd63;outline-offset:1px}
+@media(max-width:850px){.card{width:62px;height:87px}}
+
+/* V28 viewport-fit: gameplay stays inside one desktop screen */
+#singleScreen{height:100vh;overflow:hidden}
+#singleScreen .topbar{height:54px;box-sizing:border-box;padding-top:8px;padding-bottom:8px}
+#singleScreen .table{height:calc(100vh - 54px);min-height:0!important;box-sizing:border-box;padding:10px 18px 118px;overflow:hidden}
+#singleScreen .hand{bottom:8px;height:104px;left:12%;right:12%}
+#singleScreen .card{width:min(64px,5.1vw);height:min(90px,7.15vw)}
+#singleScreen .played{width:60px;height:84px}
+#singleScreen .south{bottom:112px}
+#singleScreen .north{top:8px}
+#singleScreen .west,#singleScreen .east{top:43%}
+#singleScreen .trick{top:47%}
+#onlineScreen{min-height:100vh;box-sizing:border-box}
+.online-table-wrap{height:calc(100vh - 120px);min-height:500px;max-width:min(1100px,94vw)!important;margin:4px auto!important}
+.og-topbar{height:42px;box-sizing:border-box}
+.og-table{height:calc(100% - 42px)!important;min-height:0!important;max-height:none!important;box-sizing:border-box;border-width:7px!important;border-radius:32px!important}
+.og-hand-table{bottom:8px;height:94px;width:86%}
+.og-real-card{width:min(62px,5vw)!important;height:min(87px,7vw)!important}
+.og-trick-center .og-real-card{width:56px!important;height:79px!important}
+.og-south{bottom:105px!important}.og-north{top:8px!important}.og-west,.og-east{top:43%!important}
+.og-pass-table{bottom:105px!important}
+@media(max-height:700px){
+ #singleScreen .topbar{height:46px}
+ #singleScreen .table{height:calc(100vh - 46px);padding-bottom:100px}
+ #singleScreen .hand{height:88px}
+ #singleScreen .card{width:54px;height:76px}
+ #singleScreen .played{width:52px;height:73px}
+ #singleScreen .south{bottom:92px}
+ .online-table-wrap{height:calc(100vh - 90px);min-height:430px}
+ .og-real-card{width:54px!important;height:76px!important}
+ .og-hand-table{height:82px}.og-south{bottom:90px!important}.og-pass-table{bottom:88px!important}
+}
+
+/* V29 table geometry correction */
+#singleScreen .south{bottom:82px!important;left:50%!important;top:auto!important;transform:translateX(-50%)!important;z-index:12}
+#singleScreen .north{top:6px!important;bottom:auto!important}
+#singleScreen .hand{bottom:4px!important;height:96px!important;left:5%!important;right:5%!important;overflow:visible}
+#singleScreen .card{width:72px!important;height:101px!important;margin-left:-22px!important;flex:0 0 auto}
+#singleScreen .card:first-child{margin-left:0!important}
+#singleScreen .played{width:66px!important;height:93px!important}
+#singleScreen .trick{top:45%!important}
+@media(max-width:1100px){
+ #singleScreen .card{width:68px!important;height:95px!important;margin-left:-24px!important}
+}
+@media(max-height:700px){
+ #singleScreen .south{bottom:72px!important}
+ #singleScreen .hand{height:82px!important}
+ #singleScreen .card{width:62px!important;height:87px!important;margin-left:-23px!important}
+ #singleScreen .played{width:58px!important;height:81px!important}
+}
+
+/* V30: larger cards + South anchored immediately above the hand */
+#singleScreen .south{bottom:94px!important;left:50%!important;top:auto!important;transform:translateX(-50%)!important;z-index:20;padding:5px 10px!important;min-width:125px!important}
+#singleScreen .south .avatar{display:none!important}
+#singleScreen .south .pname{font-size:13px!important;line-height:15px!important}
+#singleScreen .south .score{font-size:10px!important;line-height:12px!important}
+#singleScreen .hand{bottom:0!important;height:112px!important;left:2%!important;right:2%!important;overflow:visible}
+#singleScreen .card{width:84px!important;height:118px!important;margin-left:-31px!important;flex:0 0 auto}
+#singleScreen .card:first-child{margin-left:0!important}
+#singleScreen .played{width:74px!important;height:104px!important}
+#singleScreen .table{padding-bottom:112px!important}
+@media(max-width:1150px){
+ #singleScreen .card{width:78px!important;height:109px!important;margin-left:-31px!important}
+}
+@media(max-height:720px){
+ #singleScreen .south{bottom:82px!important}
+ #singleScreen .hand{height:98px!important}
+ #singleScreen .card{width:72px!important;height:101px!important;margin-left:-29px!important}
+ #singleScreen .played{width:66px!important;height:93px!important}
+}
+
+/* V31 interaction cleanup */
+#singleScreen .south{bottom:18px!important;left:50%!important;top:auto!important;transform:translateX(-50%)!important;z-index:30;background:#071b16e8!important}
+#singleScreen .south .avatar{display:none!important}
+#singleScreen .hand{bottom:0!important}
+#singleScreen .status,#onlineScreen .og-center-status{display:none!important}
+.pass-flash{display:none!important}
+/* Selected pass cards only lift vertically. Never enlarge or jump above neighbours. */
+#singleScreen .hand .card.selected{transform:translateY(-16px)!important;z-index:auto!important}
+#singleScreen .hand .card:hover{transform:translateY(-10px)!important;z-index:auto!important}
+#singleScreen .hand .card.selected:hover{transform:translateY(-16px)!important;z-index:auto!important}
+.og-hand-table .og-real-card.selected{transform:translateY(-16px)!important;z-index:auto!important}
+.og-hand-table .og-real-card:hover{transform:translateY(-10px)!important;z-index:auto!important}
+.og-hand-table .og-real-card.selected:hover{transform:translateY(-16px)!important;z-index:auto!important}
+
+/* V32 seat + pass-selection correction */
+/* Local identity is redundant: remove South panel entirely. */
+#singleScreen .player.south{display:none!important}
+/* Lower side opponents to open the upper/center table. */
+#singleScreen .player.west,#singleScreen .player.east{top:56%!important}
+/* Passing: selected card stays in normal stacking order, but its entire face remains visible.
+   Subsequent siblings are shifted right enough to avoid covering the raised card. */
+#singleScreen .hand .card{position:relative}
+#singleScreen .hand .card.selected{transform:translateY(-16px)!important;z-index:2!important}
+#singleScreen .hand .card.selected + .card{margin-left:-12px!important}
+#singleScreen .hand .card:hover{z-index:2!important}
+#singleScreen .hand .card.selected:hover{transform:translateY(-16px)!important}
+/* Mirror the same behaviour online. */
+.og-hand-table .og-real-card.selected{transform:translateY(-16px)!important;z-index:2!important}
+.og-hand-table .og-real-card.selected + .og-real-card{margin-left:-12px!important}
+.og-west,.og-east{top:55%!important}
+
+/* V33 — restore V16-style hand interaction */
+#singleScreen .player.west,#singleScreen .player.east{top:64%!important}
+#singleScreen .hand .card{margin-left:-31px!important;transition:transform .13s ease!important}
+#singleScreen .hand .card:first-child{margin-left:0!important}
+/* Hover/selection changes ONLY Y position. No gap changes, no scale, no reflow. */
+#singleScreen .hand .card:hover{transform:translateY(-10px)!important;z-index:1!important}
+#singleScreen .hand .card.selected{transform:translateY(-15px)!important;z-index:20!important}
+#singleScreen .hand .card.selected:hover{transform:translateY(-15px)!important;z-index:20!important}
+#singleScreen .hand .card.selected + .card{margin-left:-31px!important}
+/* Same principle online */
+.og-west,.og-east{top:63%!important}
+.og-hand-table .og-real-card{transition:transform .13s ease!important}
+.og-hand-table .og-real-card:hover{transform:translateY(-10px)!important;z-index:1!important}
+.og-hand-table .og-real-card.selected,.og-hand-table .og-real-card.selected:hover{transform:translateY(-15px)!important;z-index:20!important}
+.og-hand-table .og-real-card.selected + .og-real-card{margin-left:-25px!important}
+
+/* V34: selected pass card keeps exactly the same stacking/layer position.
+   Selection changes Y only; it is not brought forward. */
+#singleScreen .hand .card.selected,
+#singleScreen .hand .card.selected:hover{transform:translateY(-15px)!important;z-index:auto!important}
+.og-hand-table .og-real-card.selected,
+.og-hand-table .og-real-card.selected:hover{transform:translateY(-15px)!important;z-index:auto!important}
+
+/* V35: pass selection = vertical lift only.
+   z-index 1 keeps the raised card readable, without the aggressive z-index:20
+   "jump to the very front" used previously. No spacing/size/X-position changes. */
+#singleScreen .hand .card.selected,
+#singleScreen .hand .card.selected:hover{transform:translateY(-15px)!important;z-index:1!important}
+.og-hand-table .og-real-card.selected,
+.og-hand-table .og-real-card.selected:hover{transform:translateY(-15px)!important;z-index:1!important}
+
+/* V36 sidebar navigation */
+#singleScreen>.back-menu{display:none!important}
+.side-main-menu{
+ width:100%;border:1px solid #ffffff18;background:#ffffff0d;color:var(--text);
+ border-radius:11px;padding:11px 14px;margin:0 0 16px;cursor:pointer;
+ font:700 14px system-ui,Segoe UI,sans-serif;text-align:left;
+ transition:background .15s ease,transform .15s ease
+}
+.side-main-menu:hover{background:#ffffff17;transform:translateY(-1px)}
+
+/* V37 main landing screen: fit the viewport at 100% browser zoom */
+#mainMenu.menu-screen{height:100vh!important;min-height:0!important;overflow:hidden!important;padding-top:clamp(24px,6vh,70px)!important;padding-bottom:24px!important;box-sizing:border-box!important}
+#mainMenu .brand-title{margin-top:0!important}
+#mainMenu .mode-grid{margin-top:clamp(20px,4vh,42px)!important}
+
+/* V38 complete online game */
+.og-south{display:none!important}
+.og-result{position:absolute;inset:0;z-index:80;place-items:center;background:#04100bc9;backdrop-filter:blur(3px)}
+.result-card{width:min(520px,88%);background:#10211d;border:1px solid #ffffff22;border-radius:18px;padding:22px;box-shadow:0 20px 60px #0009}
+.result-card h2{margin:0 0 12px;color:var(--gold)}
+.result-card p,.result-card small{opacity:.78}
+.result-row{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;padding:10px 0;border-top:1px solid #ffffff12}
+.result-row strong{color:var(--gold)}
+#onlineScreen{height:100vh;overflow:hidden}
+
+/* V39 persistent profile + table chat */
+.profile-chip{display:flex;align-items:center;gap:8px;margin-right:auto;background:#ffffff0b;border:1px solid #ffffff18;border-radius:11px;padding:5px 8px}
+.profile-avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#7f1827;color:#fff;font-family:Georgia;font-size:17px}
+.profile-chip b,.profile-chip small{display:block;line-height:1.15}.profile-chip small{font-size:10px;opacity:.6;margin-top:2px}
+.profile-edit{border:0;background:#ffffff0c;color:#fff;border-radius:6px;padding:5px 7px;cursor:pointer;font-size:10px}
+.table-chat{max-width:680px;margin:18px auto 0;border:1px solid #ffffff16;border-radius:12px;background:#061b15aa;overflow:hidden}
+.chat-log{height:112px;overflow:auto;padding:9px 11px}.chat-line{display:flex;gap:8px;font-size:12px;margin:4px 0}.chat-line b{color:var(--gold);min-width:max-content}
+.chat-compose{display:flex;border-top:1px solid #ffffff12}.chat-compose input{flex:1;border:0;background:#071711;color:#fff;padding:9px;outline:0}.chat-compose button{border:0;background:#ffffff12;color:#fff;padding:0 12px;cursor:pointer}
+.game-chat-toggle{position:absolute;right:10px;bottom:10px;z-index:45;border:1px solid #ffffff20;background:#071b16dd;color:#fff;border-radius:9px;padding:8px 12px;cursor:pointer}
+.game-chat{display:none;position:absolute;right:10px;bottom:50px;width:280px;z-index:45;background:#071b16f2;border:1px solid #ffffff20;border-radius:12px;overflow:hidden;box-shadow:0 12px 30px #0007}.game-chat.open{display:block}
+.game-chat .chat-log{height:150px}
+
+/* V41 online play/trick motion */
+.og-trick-flight{position:fixed;z-index:76;width:74px;height:104px;border-radius:8px;overflow:hidden;pointer-events:none;transition:transform .38s cubic-bezier(.2,.8,.2,1);box-shadow:0 10px 28px #0008}
+.og-trick-flight .card-art{width:100%;height:100%;object-fit:fill;display:block}
+
+/* V42 online gameplay polish */
+.og-seat.active{outline:3px solid #8beaa3!important;box-shadow:0 0 0 5px #42d66b20,0 0 28px #42d66b99!important;animation:onlineTurnPulse 1.45s ease-in-out infinite}
+@keyframes onlineTurnPulse{50%{box-shadow:0 0 0 8px #42d66b12,0 0 34px #42d66bbb}}
+.og-pass-flight{position:fixed;z-index:88;width:74px;height:104px;border-radius:8px;overflow:hidden;pointer-events:none;transition:transform .68s cubic-bezier(.2,.8,.2,1),opacity .68s ease;box-shadow:0 10px 28px #0009}
+.og-pass-flight .card-art{width:100%;height:100%;display:block}
+.og-pass-flight.receive{transition-duration:.72s}
+.og-hand-table .og-real-card.received-card{transform:translateY(-15px)!important;z-index:1!important;box-shadow:0 0 0 2px #e5bd63,0 8px 22px #0008!important}
+
+/* V43 stability / release-candidate polish */
+.online-toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-18px);z-index:150;background:#231b18;color:#fff;border:1px solid #e5bd6355;border-radius:10px;padding:10px 16px;box-shadow:0 10px 30px #0008;opacity:0;pointer-events:none;transition:.18s ease}.online-toast.show{opacity:1;transform:translate(-50%,0)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e5bd63;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style></head><body>
+<div id="mainMenu" class="menu-screen">
+  <div class="brand-title">HEARTS ARENA</div>
+  <div class="brand-sub">Choose how you want to play</div>
+  <div class="mode-grid">
+    <button class="mode-card single" onclick="openSingle()"><div class="mode-art">♥</div><div class="mode-name">SINGLE PLAYER</div><div class="mode-desc">Play Hearts against three computer opponents</div></button>
+    <button class="mode-card online" onclick="openOnline()"><div class="mode-art">♠ ♣ ♦ ♥</div><div class="mode-name">ONLINE</div><div class="mode-desc">Browse public tables or host your own game</div></button>
+  </div>
+</div>
+<div id="singleScreen" style="display:none">
+<div class="app"><main class="table"><div class="topbar"><div class="brand">♥ HEARTS ARENA</div><div class="pill" id="roundInfo"></div><div class="pill" id="broken">♡ Hearts not broken</div></div><div class="players" id="players"></div><div class="center"><div class="status" id="status"></div><div class="trick" id="trick"></div></div><button class="passbtn" id="passBtn" hidden>Pass 3 cards</button><div class="hand" id="hand"></div></main><aside class="side"><button class="side-main-menu" onclick="backMenu()">← Main Menu</button><div class="settings"><label>Target score<select id="target"><option>75</option><option selected>100</option><option>150</option></select></label><label>Jack of Diamonds<select id="jackDiamonds"><option value="off" selected>Off (standard)</option><option value="on">On (J♦ = -10)</option></select></label><label>AI difficulty<select id="difficulty"><option value="easy">Easy</option><option value="normal">Normal</option><option value="hard" selected>Hard</option></select></label><label>Sorting<select id="sorting"><option value="suit">Suit: ♥ ♣ ♦ ♠</option><option value="rank">Rank: A → 2</option></select></label></div><button class="btn" id="newGame">New game</button><h3>Score</h3><div id="scoreboard"></div><h3>Recent tricks</h3><div class="history" id="history"></div><h3>Rules</h3><div class="tiny">Play proceeds clockwise: You → West → North → East. The winner of each trick leads the next trick. Follow suit. 2♣ leads the first trick. Hearts cannot be led until hearts are broken (unless you only have hearts). Each ♥ = 1 point and Q♠ = 13 points. On the first trick you cannot play a point card if you have a non-point alternative. Taking all 26 points is Shooting the Moon. ♦J has no special rule.</div></aside></div><div class="modal hidden" id="modal"><div class="box" id="modalBox"></div></div>
+<script>
+const SUITS=['H','C','D','S'], SYM={H:'♥',C:'♣',D:'♦',S:'♠'}, NAMES=['You','West','North','East'], POS=['south','west','north','east']; // clockwise seat order from the player's perspective
+const RANKS=['2','3','4','5','6','7','8','9','10','J','Q','K','A']; const val=r=>RANKS.indexOf(r)+2;
+let G, selected=[]; const $=id=>document.getElementById(id); const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function deck(){return SUITS.flatMap(s=>RANKS.map(r=>({s,r}))).sort(()=>Math.random()-.5)}
+function key(c){return c.r+c.s} function pts(c){if(c.s==='H')return 1;if(c.s==='S'&&c.r==='Q')return 13;if(G?.jackDiamonds&&c.s==='D'&&c.r==='J')return -10;return 0}
+function sortHand(a){let mode=$('sorting').value;return [...a].sort((x,y)=>mode==='suit'?(SUITS.indexOf(x.s)-SUITS.indexOf(y.s)||val(y.r)-val(x.r)):(val(y.r)-val(x.r)||SUITS.indexOf(x.s)-SUITS.indexOf(y.s)))}
+function fresh(reset=true){let d=deck();if(reset){G={scores:[0,0,0,0],round:0,passRound:0,history:[],over:false,target:+$('target').value,jackDiamonds:$('jackDiamonds').value==='on'};$('target').disabled=true;$('jackDiamonds').disabled=true;}G.round++;G.hands=[0,1,2,3].map(i=>d.slice(i*13,i*13+13));G.roundPts=[0,0,0,0];G.trick=[];G.played=[];G.voids=[new Set(),new Set(),new Set(),new Set()];G.leader=G.hands.findIndex(h=>h.some(c=>key(c)==='2C'));G.turn=G.leader;G.first=true;G.broken=false;G.passing=true;G.animating=false;selected=[];render();$('status').textContent=passLabel()+' – select 3 cards';}
+function passLabel(){return ['Pass 3 left','Pass 3 right','Pass 3 across','Keep your cards'][G.passRound%4]}
+function legal(i,c){let h=G.hands[i];if(!G.trick.length){if(G.first){return key(c)==='2C'} if(!G.broken&&c.s==='H'&&h.some(x=>x.s!=='H'))return false;return true}let lead=G.trick[0].card.s, has=h.some(x=>x.s===lead);if(has)return c.s===lead;if(G.first&&pts(c)>0&&h.some(x=>x.s!==lead&&pts(x)===0))return false;return true}
+function render(){G.hands=G.hands.map(sortHand);$('roundInfo').textContent=`Round ${G.round} • target ${G.target}`;$('broken').textContent=G.broken?'♥ Hearts broken':'♡ Hearts not broken';$('players').innerHTML=NAMES.map((n,i)=>`<div class="player ${POS[i]} ${G.turn===i&&!G.passing?'active':''}" data-player="${i}"><div class="avatar">${['🙂','🤖','🤖','🤖'][i]}</div><div class="pname">${n}</div><div class="score">${G.scores[i]} total • ${G.roundPts[i]} this round${i?` • ${G.hands[i].length} cards`:''}</div>${G.turn===i&&!G.passing?`<div class="turntag">${i===0?'YOUR TURN':'PLAYING NEXT'}</div>`:''}</div>`).join('');$('trick').innerHTML=G.trick.map(t=>`<div class="played pc${t.p} s${t.card.s}">${cardFaceHTML(t.card)}</div>`).join('');let hand=G.hands[0];$('hand').innerHTML=hand.map(c=>{let sel=selected.includes(key(c)),ok=G.passing||legal(0,c);return `<div class="card s${c.s} ${sel?'selected':''} ${!ok?'illegal':''}" data-k="${key(c)}">${cardFaceHTML(c)}</div>`}).join('');document.querySelectorAll('.card').forEach(el=>el.onclick=()=>clickCard(el.dataset.k));$('passBtn').hidden=!G.passing;$('passBtn').disabled=selected.length!==3;$('passBtn').textContent=G.passRound%4===3?'Keep cards':'Pass 3 cards';$('scoreboard').innerHTML=NAMES.map((n,i)=>`<div class="tiny" style="display:flex;justify-content:space-between;padding:4px"><b>${n}</b><span>${G.scores[i]}</span></div>`).join('');$('history').innerHTML=G.history.slice(-6).reverse().map(x=>`<div>${x}</div>`).join('')||'<span class="tiny">No tricks yet</span>'}
+function clickCard(k){if(G.over)return;if(G.passing){selected.includes(k)?selected=selected.filter(x=>x!==k):selected.length<3&&selected.push(k);render();$('status').textContent=passLabel()+` – ${selected.length}/3 selected`;return}if(G.turn!==0)return;let c=G.hands[0].find(x=>key(x)===k);if(c&&legal(0,c))play(0,c)}
+function aiPass(i){return [...G.hands[i]].sort((a,b)=>risk(b)-risk(a)).slice(0,3)} function risk(c){if(G?.jackDiamonds&&key(c)==='JD')return -65;return (c.s==='S'&&c.r==='Q'?100:0)+(c.s==='H'?25+val(c.r):0)+val(c.r)}
+async function animatePass(cards){
+  const mode=G.passRound%4;
+  if(mode===3){
+    const f=document.createElement('div');f.className='pass-flash';f.textContent='No pass this round';document.body.appendChild(f);await sleep(850);f.remove();return;
+  }
+  const targets=[{x:-Math.min(innerWidth*.42,500),y:-Math.min(innerHeight*.30,230)},{x:Math.min(innerWidth*.42,500),y:-Math.min(innerHeight*.30,230)},{x:0,y:-Math.min(innerHeight*.52,430)}];
+  const t=targets[mode], els=[...document.querySelectorAll('.card')].filter(el=>selected.includes(el.dataset.k));
+  const flies=els.map((el,j)=>{const r=el.getBoundingClientRect(),c=cards[j],f=document.createElement('div');f.className='pass-fly s'+c.s;f.innerHTML='<span class="corner">'+c.r+'<span class="suitbadge">'+SYM[c.s]+'</span></span>';f.style.left=r.left+'px';f.style.top=r.top+'px';document.body.appendChild(f);requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transform=`translate(${t.x}px,${t.y}px) scale(.72) rotate(${(j-1)*8}deg)`;f.style.opacity='.12'}));return f});
+  await sleep(1150);flies.forEach(f=>f.remove());
+}
+
+async function animateReceive(cards,mode){
+  if(mode===3||!cards||!cards.length)return;
+  const sources=[{x:-innerWidth*.42,y:-innerHeight*.28},{x:innerWidth*.42,y:-innerHeight*.28},{x:0,y:-innerHeight*.42}];
+  // Incoming direction is the opposite of where we passed: left receives from East, right from West, across from North.
+  const src=mode===0?sources[1]:mode===1?sources[0]:sources[2];
+  const cx=innerWidth/2-36, cy=innerHeight-125;
+  const backs=cards.map((c,j)=>{const f=document.createElement('div');f.className='receive-fly';f.style.left=(cx+src.x+(j-1)*12)+'px';f.style.top=(cy+src.y)+'px';document.body.appendChild(f);requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transform=`translate(${-src.x+(j-1)*58}px,${-src.y}px) rotate(${(j-1)*5}deg)`}));return f});
+  const msg={remove:()=>{}};
+  await sleep(1150);backs.forEach(f=>f.remove());msg.remove();
+  // Put the received cards into their real sorted positions, then hold them raised/highlighted for 0.7 s.
+  render();
+  const incomingKeys=new Set(cards.map(key));
+  const receivedEls=[...document.querySelectorAll('#hand .card')].filter(el=>incomingKeys.has(el.dataset.k));
+  receivedEls.forEach(el=>el.classList.add('just-received'));
+  await sleep(1900);
+  receivedEls.forEach(el=>el.classList.remove('just-received'));
+}
+$('passBtn').onclick=async()=>{if(selected.length!==3)return;$('passBtn').disabled=true;let picks=[selected.map(k=>G.hands[0].find(c=>key(c)===k)),aiPass(1),aiPass(2),aiPass(3)];await animatePass(picks[0]);if(G.passRound%4!==3){let shift=[1,3,2][G.passRound%3],incoming=[[],[],[],[]];for(let i=0;i<4;i++){for(let c of picks[i])G.hands[i].splice(G.hands[i].findIndex(x=>key(x)===key(c)),1);incoming[(i+shift)%4].push(...picks[i])}for(let i=0;i<4;i++)G.hands[i].push(...incoming[i]);await animateReceive(incoming[0],G.passRound%4)}G.passing=false;selected=[];G.leader=G.hands.findIndex(h=>h.some(c=>key(c)==='2C'));G.turn=G.leader;render();$('status').textContent=G.turn===0?'Your turn':'Opponent is thinking…';if(G.turn!==0)aiLoop()}
+let audioCtx;
+function tone(freq,duration=0.18,type='sine',gain=.055,delay=0){
+  try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const t=audioCtx.currentTime+delay,o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(gain,t+.02);g.gain.exponentialRampToValueAtTime(0.0001,t+duration);o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+duration+.03)}catch(e){}
+}
+function heartSound(count){tone(392,.18,'sine',.045);tone(523,.22,'sine',.04,.12);if(count>1)tone(659,.22,'sine',.035,.25)}
+function queenSound(){tone(196,.28,'triangle',.065);tone(147,.38,'sawtooth',.045,.14);tone(98,.45,'triangle',.04,.30)}
+async function showTrickWinner(w,p,cards){
+  const q=cards.some(x=>key(x.card)==='QS'), hearts=cards.filter(x=>x.card.s==='H').length;
+  if(q)queenSound(); else if(hearts)heartSound(hearts);
+  // Leave the completed trick clearly visible before collecting it.
+  await sleep(700);
+  // South is intentionally hidden, so a won trick must travel toward the
+  // local hand instead of looking for a non-visible South player box.
+  let tr;
+  if(w===0){
+    const hand=document.getElementById('hand')?.getBoundingClientRect();
+    if(hand)tr={left:hand.left,width:hand.width,top:hand.bottom-10,height:20};
+  }else{
+    tr=document.querySelector(`.player[data-player="${w}"]`)?.getBoundingClientRect();
+  }
+  const played=[...document.querySelectorAll('#trick .played')];
+  const clones=played.map(el=>{
+    const r=el.getBoundingClientRect(),c=el.cloneNode(true);
+    c.classList.add('trick-collect');c.style.left=r.left+'px';c.style.top=r.top+'px';c.style.width=r.width+'px';c.style.height=r.height+'px';c.style.transform='none';document.body.appendChild(c);return {c,r};
+  });
+  // Hide originals while their animated copies travel to the trick winner.
+  played.forEach(el=>el.style.opacity='0');
+  if(tr){requestAnimationFrame(()=>requestAnimationFrame(()=>clones.forEach(({c,r},j)=>{
+    const tx=tr.left+tr.width/2-(r.left+r.width/2), ty=tr.top+tr.height/2-(r.top+r.height/2);
+    c.style.transform=`translate(${tx}px,${ty}px) scale(.34) rotate(${(j-1.5)*7}deg)`;c.style.opacity='.12';
+  })))}
+  await sleep(1050);clones.forEach(x=>x.c.remove());
+}
+
+function cardAsset(c){return `assets/cards/${c.r}${c.s}.jpg`}
+function cardFaceHTML(c){return `<img class="card-art" src="${cardAsset(c)}" alt="${c.r}${SYM[c.s]}" draggable="false">`}
+function tableSlotRect(i){
+  const trick=document.getElementById('trick').getBoundingClientRect();
+  const w=74,h=104;
+  if(i===0)return {left:trick.left+trick.width/2-w/2,top:trick.bottom-h};
+  if(i===1)return {left:trick.left+35,top:trick.top+trick.height/2-h/2};
+  if(i===2)return {left:trick.left+trick.width/2-w/2,top:trick.top};
+  return {left:trick.right-35-w,top:trick.top+trick.height/2-h/2};
+}
+async function animateCardToTable(i,c){
+  let src;
+  if(i===0){const el=document.querySelector(`.card[data-k="${key(c)}"]`);src=el?.getBoundingClientRect()}
+  if(!src){src=document.querySelector(`.player[data-player="${i}"]`)?.getBoundingClientRect()}
+  if(!src)return;
+  const dst=tableSlotRect(i),f=document.createElement('div');f.className='play-flight s'+c.s;f.innerHTML=cardFaceHTML(c);
+  const left=src.left+src.width/2-37,top=src.top+src.height/2-52;f.style.left=left+'px';f.style.top=top+'px';document.body.appendChild(f);
+  const dx=dst.left-left,dy=dst.top-top;requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transform=`translate3d(${dx}px,${dy}px,0) scale(1)`}));
+  await sleep(500);f.remove();
+}
+function unseenCards(i){const seen=new Set(G.played.map(key));G.trick.forEach(t=>seen.add(key(t.card)));G.hands[i].forEach(c=>seen.add(key(c)));return SUITS.flatMap(s=>RANKS.map(r=>({s,r}))).filter(c=>!seen.has(key(c)))}
+function suitRemainingAbove(i,c){return unseenCards(i).filter(x=>x.s===c.s&&val(x.r)>val(c.r)).length}
+function suitRemainingBelow(i,c){return unseenCards(i).filter(x=>x.s===c.s&&val(x.r)<val(c.r)).length}
+function dangerousOpponentVoid(suit){return [0,1,2,3].some(p=>G.voids[p]?.has(suit))}
+function moonThreat(){
+  // A player with a large share of all points taken, while the others have none,
+  // is an active shoot-the-moon threat. Escalate early enough to protect hearts.
+  let max=Math.max(...G.roundPts), who=G.roundPts.indexOf(max), others=G.roundPts.filter((_,j)=>j!==who).reduce((a,b)=>a+b,0);
+  return (max>=5 && others===0) ? who : -1;
+}
+function hardScore(i,c){
+  const lead=G.trick[0]?.card.s, trickPts=G.trick.reduce((a,x)=>a+pts(x.card),0), position=G.trick.length;
+  const hand=G.hands[i], k=key(c), rank=val(c.r), remainAbove=suitRemainingAbove(i,c), remainBelow=suitRemainingBelow(i,c);
+  let s=0; // lower is preferred
+  if(G.jackDiamonds&&k==='JD'){
+    // preserve J♦; only spend it when it is likely to capture its -10 bonus
+    if(!lead)s+=340;
+    else if(c.s!==lead)s+=440;
+    else {
+      const cur=G.trick.filter(x=>x.card.s===lead), hi=cur.length?Math.max(...cur.map(x=>val(x.card.r))):0;
+      if(rank>hi)s-=180+position*90; else s+=280;
+    }
+  }
+  if(G.jackDiamonds&&k==='JD'){
+    // J♦ is valuable (-10): preserve it rather than lead/dump it blindly.
+    // Prefer playing it only when it can actually win a diamond trick, especially late in the trick.
+    if(!lead)s+=320;
+    else if(c.s!==lead)s+=420;
+    else {
+      const cur=G.trick.filter(x=>x.card.s===lead),hi=cur.length?Math.max(...cur.map(x=>val(x.card.r))):0;
+      if(rank>hi)s-=220 + position*85; else s+=260;
+    }
+  }
+  const threat=moonThreat(), stopMoon=threat>=0&&threat!==i;
+  // Against an active moon attempt, taking even one point is strategically valuable.
+  // Preserve control cards (especially A♥/K♥/Q♥) instead of casually leading/dumping them.
+  if(stopMoon){
+    if(!lead && c.s==='H' && ['A','K','Q','J','10'].includes(c.r)) s+=260;
+    if(!lead && c.s==='H') s+=110;
+  }
+  if(!lead){
+    if(c.s==='H')s+=80+rank*2;
+    if(k==='QS')s+=260;
+    if(c.s==='S'&&(c.r==='A'||c.r==='K'))s+=G.played.some(x=>key(x)==='QS')?8:75;
+    s+=rank*.7;
+    if(dangerousOpponentVoid(c.s))s+=35;
+    // Lead low from long/safer suits; avoid opening a suit where someone can dump points.
+    s-=hand.filter(x=>x.s===c.s).length*2;
+    return s;
+  }
+  const follows=c.s===lead;
+  if(!follows){
+    // When void, dump the most dangerous liability first.
+    if(k==='QS')return -500;
+    if(c.s==='S'&&(c.r==='A'||c.r==='K')&&!G.played.some(x=>key(x)==='QS'))return -350-rank;
+    if(c.s==='H')return stopMoon ? (rank>=12?180:40-rank) : -220-rank*3;
+    return -rank*4-hand.filter(x=>x.s===c.s).length*5;
+  }
+  const leadCards=G.trick.filter(x=>x.card.s===lead), currentHigh=Math.max(...leadCards.map(x=>val(x.card.r))), wins=rank>currentHigh;
+  if(wins){
+    s+=70+trickPts*75;
+    if(stopMoon&&trickPts>0)s-=520;
+    if(k==='QS')s+=500;
+    // Winning late is especially bad when points are present.
+    s+=position*trickPts*18;
+    // A card that is likely to remain unbeatable is risky.
+    if(remainAbove===0)s+=35;
+  }else{
+    // Prefer the highest card that stays under the current winner.
+    s-=rank*5;
+    if(k==='QS')s-=450;
+    if(c.s==='H')s-=rank*2;
+  }
+  // Before Q♠ is gone, preserve low spades and try not to expose A/K.
+  if(c.s==='S'&&!G.played.some(x=>key(x)==='QS')){
+    if(c.r==='A'||c.r==='K')s+=wins?130:30;
+    if(rank<12)s-=12;
+  }
+  // If almost all higher cards are gone, high cards are effectively masters.
+  if(remainAbove===0&&remainBelow>0)s+=20;
+  return s;
+}
+async function play(i,c){
+  if(G.animating)return;G.animating=true;
+  const leadBefore=G.trick[0]?.card.s;
+  await animateCardToTable(i,c);
+  if(leadBefore&&c.s!==leadBefore)G.voids[i].add(leadBefore);
+  G.hands[i].splice(G.hands[i].findIndex(x=>key(x)===key(c)),1);G.trick.push({p:i,card:c});if(c.s==='H')G.broken=true;
+  if(G.trick.length<4){G.turn=(i+1)%4;G.animating=false;render();$('status').textContent=G.turn===0?'Your turn':`${NAMES[G.turn]} is thinking…`;if(G.turn!==0&&i===0)setTimeout(aiLoop,0);return}
+  let lead=G.trick[0].card.s,w=G.trick.filter(x=>x.card.s===lead).reduce((a,b)=>val(a.card.r)>val(b.card.r)?a:b).p,p=G.trick.reduce((s,x)=>s+pts(x.card),0);
+  G.roundPts[w]+=p;G.history.push(`${NAMES[w]} took the trick${p?' • +'+p+' points':''}`);G.turn=w;G.first=false;render();
+  const finished=[...G.trick];await showTrickWinner(w,p,finished);
+  G.played.push(...finished.map(x=>x.card));G.trick=[];G.animating=false;render();await sleep(450);
+  if(G.hands.every(h=>!h.length)){endRound();return}
+  $('status').textContent=G.turn===0?'Your turn':`${NAMES[G.turn]} is thinking…`;if(G.turn!==0&&i===0)setTimeout(aiLoop,0);
+}
+function chooseAI(i){
+  let L=G.hands[i].filter(c=>legal(i,c)),dif=$('difficulty').value;
+  if(dif==='easy')return L[Math.floor(Math.random()*L.length)];
+  if(dif==='hard')return [...L].sort((a,b)=>hardScore(i,a)-hardScore(i,b))[0];
+  let lead=G.trick[0]?.card.s;
+  let score=c=>{let s=val(c.r);if(c.s==='H')s+=35;if(key(c)==='QS')s+=90;if(!G.trick.length)s+=c.s==='H'?40:0;else if(c.s!==lead)s-=risk(c)*2;else{let high=Math.max(...G.trick.filter(x=>x.card.s===lead).map(x=>val(x.card.r)));if(val(c.r)>high)s+=G.trick.reduce((a,x)=>a+pts(x.card),0)*35}return s};
+  L.sort((a,b)=>score(a)-score(b));if(Math.random()<.2)return L[Math.min(1,L.length-1)];return L[0]
+}
+let aiBusy=false;async function aiLoop(){if(aiBusy)return;aiBusy=true;try{while(!G.passing&&G.turn!==0&&G.hands[G.turn].length&&!G.over){$('status').textContent=`${NAMES[G.turn]} is thinking…`;await sleep(300);let i=G.turn,c=chooseAI(i);await play(i,c);if(G.turn===0||G.passing||G.over)break}}finally{aiBusy=false}}
+function endRound(){let shooter=G.roundPts.findIndex(x=>x===26);if(shooter>=0){for(let i=0;i<4;i++)if(i!==shooter)G.scores[i]+=26;G.history.push(`🌙 ${NAMES[shooter]} shot the moon!`)}else for(let i=0;i<4;i++)G.scores[i]+=G.roundPts[i];let target=G.target;if(G.scores.some(x=>x>=target)){G.over=true;let order=[0,1,2,3].sort((a,b)=>G.scores[a]-G.scores[b]);showEnd(order);return}showRound()}
+function showRound(){let b=$('modalBox');b.innerHTML=`<h1>Round ${G.round} complete</h1><div class="stand">${NAMES.map((n,i)=>`<div><b>${n}</b><span>+${G.roundPts[i]} • total ${G.scores[i]}</span></div>`).join('')}</div><button class="btn" id="continue">Next round</button>`;$('modal').classList.remove('hidden');$('continue').onclick=()=>{$('modal').classList.add('hidden');G.passRound++;fresh(false)}}
+function showEnd(order){let b=$('modalBox');b.innerHTML=`<h1>🏆 ${NAMES[order[0]]} wins!</h1><p>Lowest score wins.</p><div class="stand">${order.map((i,n)=>`<div><b>${n+1}. ${NAMES[i]}</b><span>${G.scores[i]} points</span></div>`).join('')}</div><button class="btn" id="again">Play again</button>`;$('modal').classList.remove('hidden');$('again').onclick=()=>{$('modal').classList.add('hidden');fresh(true)}}
+let configuring=true;
+function showStartTable(){
+  G={scores:[0,0,0,0],round:0,passRound:0,history:[],over:false,target:+$('target').value,jackDiamonds:$('jackDiamonds').value==='on',hands:[[],[],[],[]],roundPts:[0,0,0,0],trick:[],played:[],voids:[new Set(),new Set(),new Set(),new Set()],turn:-1,first:true,broken:false,passing:false,animating:false};
+  $('target').disabled=false;$('jackDiamonds').disabled=false;$('newGame').textContent='New game';
+  render();$('roundInfo').textContent='Ready to play';$('status').textContent='Choose your settings, then press New game';$('passBtn').hidden=true;
+}
+$('newGame').onclick=()=>{configuring=false;fresh(true)};
+$('sorting').onchange=()=>{if(G)render()};
+showStartTable();
+
+const demoTables=[];
+const savedProfileName=(localStorage.getItem('heartsPlayerName')||'Player').trim().slice(0,18)||'Player';
+const savedProfileRating=parseInt(localStorage.getItem('heartsRating')||'1200',10)||1200;
+const onlineMe={name:savedProfileName,rating:savedProfileRating};
+function syncProfileUI(){const n=document.getElementById('profileNameView'),r=document.getElementById('profileRatingView');if(n)n.textContent=onlineMe.name;if(r)r.textContent=onlineMe.rating}
+function editProfile(){
+ if(activeTableId){setNetState('Leave the table before changing your name');return}
+ const v=prompt('Player name',onlineMe.name);if(v===null)return;const name=v.trim().replace(/[<>]/g,'').slice(0,18);if(!name)return;
+ onlineMe.name=name;localStorage.setItem('heartsPlayerName',name);reconnectToken=null;localStorage.removeItem('heartsReconnect');syncProfileUI();
+ if(net){try{net.close()}catch{}} setTimeout(connectOnline,100);
+}
+function openSingle(){document.getElementById('mainMenu').style.display='none';document.getElementById('onlineScreen').style.display='none';document.getElementById('singleScreen').style.display='block'}
+function openOnline(){syncProfileUI();document.getElementById('mainMenu').style.display='none';document.getElementById('singleScreen').style.display='none';document.getElementById('onlineScreen').style.display='block';renderLobby()}
+function backMenu(){document.getElementById('singleScreen').style.display='none';document.getElementById('onlineScreen').style.display='none';document.getElementById('mainMenu').style.display='block'}
+function toggleHost(){let x=document.getElementById('hostPanel');x.style.display=x.style.display==='none'?'block':'none'}
+function renderLobby(){
+ document.getElementById('tableList').innerHTML=demoTables.length?demoTables.map(t=>`<div class="table-row" onclick="openTable(${t.id})"><div><div class="table-id">#${t.id} · ${t.name}</div><div class="table-host">Host: ${t.host}</div></div><div class="rule-tags"><span class="tag">${t.timer}</span><span class="tag">Target ${t.target}</span><span class="tag">J♦ ${t.jd?'ON':'OFF'}</span></div><div>${t.players.map((p,i)=>`<span class="player"><i class="dot ${i%3===1?'open':''}"></i>${p[0]}${p[1]?` <span class="rating">${p[1]}</span>`:''}</span>`).join('')}</div>${t.member?'<span class="joined-mark">Joined ✓</span>':`<button class="join-btn" onclick="event.stopPropagation();joinDemo(${t.id})">${t.players.length<4?'Join':'Full'}</button>`}</div>`).join(''):`<div class="empty-lobby"><div class="empty-heart">♡</div><b>No public tables yet</b><span>Create a table to become the host.</span></div>`;
+}
+function createDemoTable(){
+ let id=Math.floor(300+Math.random()*600),name=document.getElementById('hostName').value||'My Hearts Table';
+ const table={id,name,host:onlineMe.name,target:+document.getElementById('hostTarget').value,jd:document.getElementById('hostJD').value==='on',timer:document.getElementById('hostTimer').value+'m',players:[[onlineMe.name,onlineMe.rating]],member:true,hostMe:true,ready:{You:false}};
+ if(net&&net.readyState===1){net.send(JSON.stringify({type:'CREATE_TABLE',payload:{name:table.name,target:table.target,jd:table.jd,timer:parseInt(table.timer)}}));document.getElementById('hostPanel').style.display='none';return;}
+ setNetState('Connect to the server to create a table');
+}
+function joinDemo(id){
+ if(net&&net.readyState===1){sendNet('JOIN_TABLE',{id});return;}
+ setNetState('Connect to the server to join a table');
+}
+
+
+let net=null,clientId=null,reconnectToken=localStorage.getItem('heartsReconnect')||null,reconnectTimer=null,manualDisconnect=false,connecting=false;
+function setNetState(text,on=false){const t=document.getElementById('netText'),d=document.getElementById('netDot');if(t)t.textContent=text;if(d)d.className=on?'connected':''}
+function connectOnline(){
+ const url=document.getElementById('serverUrl').value.trim();if(!url||connecting||net?.readyState===1)return;
+ manualDisconnect=false;connecting=true;
+ try{net=new WebSocket(url)}catch(e){connecting=false;setNetState('Invalid server address');return}
+ setNetState('Connecting…');
+ net.onopen=()=>{connecting=false;setNetState('Connected',true);if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null}net.send(JSON.stringify({type:'HELLO',payload:{name:onlineMe.name,reconnectToken}}))};
+ net.onclose=()=>{connecting=false;net=null;if(manualDisconnect){setNetState('Offline');return}setNetState('Disconnected • reconnecting…');clearTimeout(reconnectTimer);reconnectTimer=setTimeout(connectOnline,1800)};
+ net.onerror=()=>setNetState('Connection failed');
+ net.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch{return}handleNet(m)};
+}
+function sendNet(type,payload={}){if(net&&net.readyState===1)net.send(JSON.stringify({type,payload}))}
+function handleNet(m){
+ if(m.type==='WELCOME'){clientId=m.clientId;onlineMe.name=m.name||onlineMe.name;onlineMe.rating=m.rating??1200;localStorage.setItem('heartsRating',onlineMe.rating);syncProfileUI();if(m.reconnectToken){reconnectToken=m.reconnectToken;localStorage.setItem('heartsReconnect',reconnectToken)}const mr=document.getElementById('myRating');if(mr)mr.textContent=onlineMe.rating;sendNet('LIST_TABLES')}
+ if(m.type==='TABLES'){demoTables.splice(0,demoTables.length,...m.tables.map(t=>({...t,member:t.players.some(p=>p[2]===clientId),hostMe:t.hostId===clientId})));renderLobby()}
+ if(m.type==='TABLE_STATE'){
+   let i=demoTables.findIndex(t=>t.id===m.table.id),t={...m.table,member:m.table.players.some(p=>p[2]===clientId),hostMe:m.table.hostId===clientId};
+   if(i<0)demoTables.unshift(t);else demoTables[i]=t;renderLobby();if(t.member){activeTableId=t.id;openTable(t.id)}
+ }
+ if(m.type==='RATING'){onlineMe.rating=m.rating;localStorage.setItem('heartsRating',onlineMe.rating);syncProfileUI();const mr=document.getElementById('myRating');if(mr)mr.textContent=m.rating}
+ if(m.type==='GAME_START'||m.type==='GAME_STATE'){showOnlineGame(m.state||m.game||m);}
+ if(m.type==='ROUND_END'){showOnlineRoundEnd(m);}
+ if(m.type==='MATCH_END'){showOnlineMatchEnd(m);}
+ if(m.type==='CHAT'){receiveChat(m);}
+ if(m.type==='ERROR'){showOnlineToast(m.message||'Online error');}
+ if(m.type==='ERROR')alert(m.message||'Server error');
+}
+
+let activeTableId=null;
+function openTable(id){
+ const t=demoTables.find(x=>x.id===id); if(!t)return;
+ if(!t.member){return;} // outsiders remain in lobby until Join
+ activeTableId=id;
+ document.getElementById('tableList').style.display='none';
+ document.querySelector('.lobby-columns').style.display='none';
+ document.getElementById('waitingRoom').style.display='block';
+ document.getElementById('waitTitle').textContent=`#${t.id} · ${t.name}`;
+ document.getElementById('waitRules').innerHTML=`<span class="tag">Target ${t.target}</span><span class="tag">J♦ ${t.jd?'ON (-10)':'OFF'}</span><span class="tag">${t.timer} per player</span>`;
+ document.getElementById('hostBadge').style.display=t.hostMe?'block':'none';
+ renderWaiting();
+}
+function renderWaiting(){
+ const t=demoTables.find(x=>x.id===activeTableId);if(!t)return;
+ if(!t.ready)t.ready={};
+ const seats=[0,1,2,3].map(i=>{
+  const pl=t.players[i];
+  if(!pl)return `<div class="wait-seat empty-seat"><div class="avatar">+</div><b>Open seat</b><span>Waiting for player</span></div>`;
+  const host=i===0;
+  return `<div class="wait-seat"><div class="avatar">♥</div><b>${pl[0]} ${host?'<em>HOST</em>':''}</b><span class="wait-rating">${pl[1]??1200} rating</span><span class="${t.ready[pl[2]]?'ready-state yes':'ready-state'}">${t.ready[pl[2]]?'READY ✓':'Not ready'}</span></div>`;
+ }).join('');
+ document.getElementById('waitSeats').innerHTML=seats;
+ const meReady=!!t.ready?.[clientId];
+ document.getElementById('readyBtn').textContent=meReady?'Cancel Ready':'Ready';
+ const allReady=t.players.length===4&&t.players.every(p=>t.ready[p[2]]);
+ const start=document.getElementById('startOnlineBtn');
+ start.style.display=t.hostMe?'inline-block':'none';start.disabled=!allReady;
+ document.getElementById('waitMessage').textContent=t.players.length<4?`Waiting for ${4-t.players.length} more player${4-t.players.length===1?'':'s'}…`:allReady?'All players ready. Host can start.':'Waiting for everyone to be ready…';
+}
+function toggleReady(){if(net&&net.readyState===1){sendNet('TOGGLE_READY',{id:activeTableId});return;}setNetState('Connect to the server first')}
+function leaveWaiting(){
+ const leaving=activeTableId;
+ activeTableId=null;
+ if(net&&net.readyState===1&&leaving!=null)sendNet('LEAVE_TABLE',{id:leaving});
+ document.getElementById('waitingRoom').style.display='none';
+ document.getElementById('tableList').style.display='block';
+ document.querySelector('.lobby-columns').style.display='grid';
+ renderLobby();
+}
+function startOnlinePreview(){if(net&&net.readyState===1){sendNet('START_GAME',{id:activeTableId});return;}document.getElementById('waitMessage').textContent='Ready to start — connect to the server for multiplayer.'}
+
+let onlineGameState=null,onlineSelected=[],prevOnlineState=null,lastOnlinePassSerial=-1,onlineReceiveHighlightUntil=0;
+function suitSym(s){return ({H:'♥',D:'♦',C:'♣',S:'♠'})[s]||s}
+function onlineCardFace(c,clickable=true){let k=c.r+c.s,sel=onlineSelected.includes(k),rec=(onlineGameState?.you?.received||[]).some(x=>x.r===c.r&&x.s===c.s)&&Date.now()<onlineReceiveHighlightUntil;return `<button class="og-real-card ${sel?'selected':''} ${rec?'received-card':''}" ${clickable?`onclick="onlineCard('${c.r}','${c.s}')"`:'disabled'}><img class="card-art" src="${cardAsset(c)}" alt="${c.r}${suitSym(c.s)}" draggable="false"></button>`}
+
+
+function fmtClock(ms){let sec=Math.max(0,Math.ceil(ms/1000));return `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`}
+
+function onlineSeatFor(playerId,st){
+ const ps=st?.players||[],me=ps.findIndex(x=>x.id===clientId);if(me<0)return null;
+ const ix=ps.findIndex(x=>x.id===playerId);if(ix<0)return null;
+ return ['ogSeatS','ogSeatW','ogSeatN','ogSeatE'][(ix-me+4)%4];
+}
+function onlineCollectTarget(playerId,st){
+ const seat=onlineSeatFor(playerId,st);
+ if(seat==='ogSeatS'){
+   const h=document.getElementById('ogHand')?.getBoundingClientRect();
+   return h?{x:h.left+h.width/2,y:h.bottom+18}:null;
+ }
+ const r=seat&&document.getElementById(seat)?.getBoundingClientRect();
+ return r?{x:r.left+r.width/2,y:r.top+r.height/2}:null;
+}
+function animateOnlineDelta(prev,next){
+ if(!prev||!next||prev.tableId!==next.tableId)return;
+ const a=prev.trick||[],b=next.trick||[];
+ // A newly played card: fly from the correct player's seat (or local hand) to centre.
+ if(b.length===a.length+1){
+   const x=b[b.length-1],seat=onlineSeatFor(x.id,next),src=(seat==='ogSeatS'?document.getElementById('ogHand'):document.getElementById(seat))?.getBoundingClientRect();
+   const dst=document.getElementById('ogTrick')?.getBoundingClientRect();
+   if(src&&dst){
+    const f=document.createElement('div');f.className='og-trick-flight';f.innerHTML=cardFaceHTML(x.card);
+    const sx=src.left+src.width/2-37,sy=src.top+src.height/2-52,dx=dst.left+dst.width/2-37-sx,dy=dst.top+dst.height/2-52-sy;
+    f.style.left=sx+'px';f.style.top=sy+'px';document.body.appendChild(f);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.transform=`translate(${dx}px,${dy}px)`));setTimeout(()=>f.remove(),430);
+   }
+ }
+ // Four-card trick disappeared: previous turnId is the trick winner on the server.
+ if(a.length===4&&b.length===0){
+   const hasQ=a.some(x=>x.card?.r==='Q'&&x.card?.s==='S'),heartCount=a.filter(x=>x.card?.s==='H').length;
+   if(hasQ)queenSound();else if(heartCount)heartSound(heartCount);
+   const target=onlineCollectTarget(next.turnId,next),tr=document.getElementById('ogTrick')?.getBoundingClientRect();if(!target||!tr)return;
+   const cards=a.map((x,i)=>{const f=document.createElement('div');f.className='og-trick-flight og-collect';f.innerHTML=cardFaceHTML(x.card);
+     const ang=(i/4)*Math.PI*2,sx=tr.left+tr.width/2-37+Math.cos(ang)*30,sy=tr.top+tr.height/2-52+Math.sin(ang)*22;
+     f.style.left=sx+'px';f.style.top=sy+'px';document.body.appendChild(f);return {f,sx,sy,i}});
+   setTimeout(()=>cards.forEach(({f,sx,sy,i})=>{f.style.transition='transform .72s cubic-bezier(.2,.8,.2,1),opacity .72s';f.style.transform=`translate(${target.x-37-sx}px,${target.y-52-sy}px) scale(.34) rotate(${(i-1.5)*7}deg)`;f.style.opacity='.1'}),700);
+   setTimeout(()=>cards.forEach(x=>x.f.remove()),1480);
+ }
+}
+
+function showOnlineGame(st){
+ animateOnlineDelta(prevOnlineState,st);prevOnlineState=JSON.parse(JSON.stringify(st));onlineGameState=st;document.getElementById('waitingRoom').style.display='none';document.getElementById('tableList').style.display='none';document.querySelector('.lobby-columns').style.display='none';document.getElementById('onlineGame').style.display='block';
+ document.getElementById('ogTable').textContent=`#${st.tableId||activeTableId} · Online Hearts`;
+ let clocks=st.clocks||{},players=st.players||[],meIndex=players.findIndex(x=>x.id===clientId);if(meIndex<0)meIndex=0;
+ const rel=n=>players[(meIndex+n)%4], seats=[[0,'ogSeatS'],[1,'ogSeatW'],[2,'ogSeatN'],[3,'ogSeatE']];
+ for(const [n,id] of seats){let pl=rel(n),el=document.getElementById(id);if(!pl){el.innerHTML='';continue}let turn=st.turnId===pl.id;el.classList.toggle('active',turn);el.innerHTML=`<div class="og-avatar">${n===0?'🙂':'●'}</div><b>${pl.name}</b><span>${pl.rating} rating</span><span>${pl.cards} cards • ${fmtClock(clocks[pl.id]??0)}</span>${turn?'<em>PLAYING</em>':''}`;}
+ document.getElementById('ogClock').textContent=`Your clock ${fmtClock(clocks[clientId]??0)}`;
+ document.getElementById('ogStatus').textContent=st.phase==='pass'?`Select 3 cards • pass ${st.passDirection}`:(st.turnId===clientId?'YOUR TURN':`${st.turnName||'Opponent'} is playing`);
+ document.getElementById('ogTrick').innerHTML=(st.trick||[]).map(x=>onlineCardFace(x.card,false)).join('');
+ document.getElementById('ogHand').innerHTML=(st.you?.hand||[]).sort((a,b)=>'HCDS'.indexOf(a.s)-'HCDS'.indexOf(b.s)||['A','K','Q','J','10','9','8','7','6','5','4','3','2'].indexOf(a.r)-['A','K','Q','J','10','9','8','7','6','5','4','3','2'].indexOf(b.r)).map(c=>onlineCardFace(c,true)).join('');
+ document.getElementById('ogPass').innerHTML=st.phase==='pass'?`<button class="ready-btn" onclick="sendPass()" ${onlineSelected.length===3?'':'disabled'}>Pass selected (${onlineSelected.length}/3)</button>`:'';
+ if(st.passSerial>0&&st.passSerial!==lastOnlinePassSerial){
+   lastOnlinePassSerial=st.passSerial;onlineReceiveHighlightUntil=Date.now()+1900;
+   animateOnlineReceive(st.you?.received||[],st.passDirection);const serial=st.passSerial;
+   setTimeout(()=>{if(onlineGameState?.passSerial===serial)document.querySelectorAll('#ogHand .received-card').forEach(x=>x.classList.remove('received-card'))},1900);
+ }
+}
+function onlineCard(r,su){let st=onlineGameState;if(!st)return;if(st.phase==='pass'){let k=r+su,i=onlineSelected.indexOf(k);if(i>=0)onlineSelected.splice(i,1);else if(onlineSelected.length<3)onlineSelected.push(k);showOnlineGame(st);return}sendNet('PLAY_CARD',{id:activeTableId,card:{r,s:su}})}
+function onlinePassVector(dir){
+ if(dir==='left')return {x:-window.innerWidth*.32,y:-window.innerHeight*.34};
+ if(dir==='right')return {x:window.innerWidth*.32,y:-window.innerHeight*.34};
+ return {x:0,y:-window.innerHeight*.52};
+}
+function animateOnlinePassSend(cards,dir){
+ const v=onlinePassVector(dir),hand=document.getElementById('ogHand')?.getBoundingClientRect();if(!hand)return;
+ cards.forEach((k,i)=>{const c=(onlineGameState?.you?.hand||[]).find(x=>x.r+x.s===k);if(!c)return;
+  const f=document.createElement('div');f.className='og-pass-flight';f.innerHTML=cardFaceHTML(c);
+  f.style.left=(hand.left+hand.width/2-37+(i-1)*18)+'px';f.style.top=(hand.top+10)+'px';document.body.appendChild(f);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transform=`translate(${v.x}px,${v.y}px) scale(.7)`;f.style.opacity='.08'}));setTimeout(()=>f.remove(),720);
+ });
+}
+function animateOnlineReceive(cards,dir){
+ if(!cards?.length)return;const hand=document.getElementById('ogHand')?.getBoundingClientRect();if(!hand)return;
+ const v=onlinePassVector(dir),from={x:-v.x,y:-v.y};
+ cards.forEach((c,i)=>{const f=document.createElement('div');f.className='og-pass-flight receive';f.innerHTML=cardFaceHTML(c);
+   const ex=hand.left+hand.width/2-37+(i-1)*18,ey=hand.top+10;f.style.left=ex+'px';f.style.top=ey+'px';f.style.transform=`translate(${from.x}px,${from.y}px) scale(.7)`;f.style.opacity='.1';document.body.appendChild(f);
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transform='translate(0,0) scale(1)';f.style.opacity='1'}));setTimeout(()=>f.remove(),760);
+ });
+}
+function sendPass(){if(onlineSelected.length!==3)return;animateOnlinePassSend([...onlineSelected],onlineGameState?.passDirection);sendNet('PASS_CARDS',{id:activeTableId,cards:onlineSelected});onlineSelected=[]}
+
+
+function showOnlineToast(msg){
+ let el=document.getElementById('onlineToast');if(!el){el=document.createElement('div');el.id='onlineToast';el.className='online-toast';document.getElementById('onlineScreen').appendChild(el)}
+ el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+function escChat(x){return String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function sendChat(where){
+ const input=document.getElementById(where==='game'?'gameChatInput':'waitChatInput');if(!input)return;
+ const message=input.value.trim();if(!message)return;sendNet('CHAT',{message});input.value='';
+}
+function receiveChat(m){
+ const html=`<div class="chat-line"><b>${escChat(m.name)}</b><span>${escChat(m.message)}</span></div>`;
+ for(const id of ['waitChatLog','gameChatLog']){const el=document.getElementById(id);if(el){el.insertAdjacentHTML('beforeend',html);while(el.children.length>40)el.firstElementChild.remove();el.scrollTop=el.scrollHeight}}
+}
+function toggleGameChat(){document.getElementById('gameChat').classList.toggle('open')}
+
+function showOnlineRoundEnd(m){
+ const box=document.getElementById('ogResult'); if(!box)return;
+ const rows=(m.players||[]).map(p=>`<div class="result-row"><b>${p.name}</b><span>${p.roundPoints>=0?'+':''}${p.roundPoints} this round</span><strong>${p.score}</strong></div>`).join('');
+ box.innerHTML=`<div class="result-card"><h2>Round complete</h2>${m.moon?`<p>${m.moon} shot the moon!</p>`:''}${rows}<small>Next round starts automatically…</small></div>`;
+ box.style.display='grid'; setTimeout(()=>{box.style.display='none'},1300);
+}
+function showOnlineMatchEnd(m){
+ const box=document.getElementById('ogResult'); if(!box)return;
+ const rows=(m.players||[]).map(p=>`<div class="result-row"><b>${p.name}</b><span>${p.score} pts</span><strong>${p.oldRating} → ${p.rating} (${p.delta>=0?'+':''}${p.delta})</strong></div>`).join('');
+ box.innerHTML=`<div class="result-card"><h2>${m.reason==='timeout'?'Game over — clock expired':'Game over'}</h2>${m.timeoutName?`<p>${m.timeoutName} ran out of time.</p>`:''}${rows}<button class="host-btn" onclick="closeOnlineResult()">Continue to lobby</button></div>`;
+ box.style.display='grid';
+}
+function closeOnlineResult(){document.getElementById('ogResult').style.display='none';document.getElementById('onlineGame').style.display='none';openOnline()}
+function leaveOnlineGame(){
+ if(onlineGameState&&onlineGameState.phase){showOnlineToast('An active online game cannot be left without disconnecting.');return}
+ document.getElementById('onlineGame').style.display='none';openOnline();
+}
+
+</script></div>
+<div id="onlineScreen" class="online-screen" style="display:none">
+ <div class="netbar"><div class="profile-chip"><span class="profile-avatar">♥</span><div><b id="profileNameView">Player</b><small>Rating <span id="profileRatingView">1200</span></small></div><button class="profile-edit" onclick="editProfile()" title="Edit player name">Edit</button></div><span id="netDot"></span><span id="netText">Offline</span><input id="serverUrl" value="ws://localhost:8080" aria-label="Server URL"><button class="back-menu" onclick="connectOnline()">Connect</button></div><div class="online-head"><div><button class="back-menu" onclick="backMenu()">← Main menu</button><h1>Online Lobby</h1><p>Open tables waiting for players</p></div><button class="host-btn" onclick="toggleHost()">+ Create Table</button></div>
+ <div id="hostPanel" class="host-panel" style="display:none">
+   <h2>Create Table</h2><div class="host-grid">
+    <label>Table name<input id="hostName" value="My Hearts Table"></label>
+    <label>Target score<select id="hostTarget"><option>75</option><option selected>100</option><option>150</option></select></label>
+    <label>Jack of Diamonds<select id="hostJD"><option value="off">Off</option><option value="on">On (-10)</option></select></label>
+    <label>Player clock<select id="hostTimer"><option value="7">7 minutes</option><option value="10" selected>10 minutes</option><option value="15">15 minutes</option></select></label>
+   </div><button class="host-btn" onclick="createDemoTable()">Create public table</button>
+ </div>
+ <div class="lobby-columns"><span>TABLE</span><span>RULES</span><span>PLAYERS</span><span></span></div>
+ <div id="tableList"></div><div id="onlineGame" class="online-game online-table-wrap" style="display:none">
+ <div class="og-topbar"><button class="back-menu" onclick="leaveOnlineGame()">← Lobby</button><b id="ogTable">Online Hearts</b><span id="ogClock">7:00</span></div>
+ <div class="og-table">
+  <div id="ogSeatN" class="og-seat og-north"></div><div id="ogSeatW" class="og-seat og-west"></div><div id="ogSeatE" class="og-seat og-east"></div><div id="ogSeatS" class="og-seat og-south"></div>
+  <div id="ogStatus" class="og-center-status">Waiting…</div><div id="ogTrick" class="og-trick-center"></div>
+  <button id="gameChatToggle" class="game-chat-toggle" onclick="toggleGameChat()">Chat</button><div id="gameChat" class="game-chat"><div id="gameChatLog" class="chat-log"></div><div class="chat-compose"><input id="gameChatInput" maxlength="160" placeholder="Message…" onkeydown="if(event.key==='Enter')sendChat('game')"><button onclick="sendChat('game')">Send</button></div></div>
+  <div id="ogHand" class="og-hand-table"></div><div id="ogPass" class="og-pass-table"></div><div id="ogResult" class="og-result" style="display:none"></div>
+ </div>
+</div>
+<div id="waitingRoom" class="waiting-room" style="display:none">
+ <div class="waiting-top"><button class="back-menu" onclick="leaveWaiting()">← Lobby</button><div><h2 id="waitTitle">Table</h2><div id="waitRules" class="rule-tags"></div></div><div class="host-badge" id="hostBadge">HOST</div></div>
+ <div class="seat-grid" id="waitSeats"></div>
+ <div class="waiting-actions"><button id="readyBtn" class="ready-btn" onclick="toggleReady()">Ready</button><button id="startOnlineBtn" class="host-btn" onclick="startOnlinePreview()" style="display:none">Start Game</button></div>
+ <div id="waitMessage" class="wait-message">Waiting for players…</div>
+ <div class="table-chat"><div id="waitChatLog" class="chat-log"></div><div class="chat-compose"><input id="waitChatInput" maxlength="160" placeholder="Message table…" onkeydown="if(event.key==='Enter')sendChat('wait')"><button onclick="sendChat('wait')">Send</button></div></div>
+</div>
+</div>
+</body></html>
