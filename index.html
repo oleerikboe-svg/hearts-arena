@@ -374,24 +374,24 @@ body.public-online .netbar{justify-content:flex-end}
 .table-row>div{min-width:0}
 
 /* Android landscape shell v1 */
-body.android-app{overscroll-behavior:none}
-body.android-app #landing{min-height:100vh}
+html.android-app body{overscroll-behavior:none}
+html.android-app body #landing{min-height:100vh}
 @media(max-width:950px) and (orientation:landscape){
- body.android-app .landing-inner{padding:12px}
- body.android-app .brand{margin-bottom:8px}
- body.android-app .mode-grid{grid-template-columns:1fr 1fr;gap:12px}
- body.android-app .mode-card{min-height:220px;padding:14px}
- body.android-app .mode-art{height:105px;font-size:64px}
- body.android-app .mode-name{font-size:20px}
- body.android-app #singleScreen .app{grid-template-columns:minmax(0,1fr) 190px!important}
- body.android-app #singleScreen .hand{right:202px!important;bottom:8px!important}
- body.android-app #singleScreen .hand .card{width:68px!important;height:96px!important;margin-left:-30px!important}
- body.android-app .online-play-layout{grid-template-columns:minmax(0,1fr) 205px!important}
- body.android-app #onlineGame .og-hand-table{bottom:12px!important;height:104px!important}
- body.android-app #onlineGame .og-hand-table .og-real-card{width:68px!important;height:96px!important;margin-left:-30px!important}
- body.android-app #onlineGame .og-pass-table{bottom:110px!important}
- body.android-app .online-side{padding:8px}
- body.android-app .og-seat{transform:scale(.84)}
+ html.android-app body .landing-inner{padding:12px}
+ html.android-app body .brand{margin-bottom:8px}
+ html.android-app body .mode-grid{grid-template-columns:1fr 1fr;gap:12px}
+ html.android-app body .mode-card{min-height:220px;padding:14px}
+ html.android-app body .mode-art{height:105px;font-size:64px}
+ html.android-app body .mode-name{font-size:20px}
+ html.android-app body #singleScreen .app{grid-template-columns:minmax(0,1fr) 190px!important}
+ html.android-app body #singleScreen .hand{right:202px!important;bottom:8px!important}
+ html.android-app body #singleScreen .hand .card{width:68px!important;height:96px!important;margin-left:-30px!important}
+ html.android-app body .online-play-layout{grid-template-columns:minmax(0,1fr) 205px!important}
+ html.android-app body #onlineGame .og-hand-table{bottom:12px!important;height:104px!important}
+ html.android-app body #onlineGame .og-hand-table .og-real-card{width:68px!important;height:96px!important;margin-left:-30px!important}
+ html.android-app body #onlineGame .og-pass-table{bottom:110px!important}
+ html.android-app body .online-side{padding:8px}
+ html.android-app body .og-seat{transform:scale(.84)}
 }
 
 /* Android landscape shell v2: compact phone layout */
